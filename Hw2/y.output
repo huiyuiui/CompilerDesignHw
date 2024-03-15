@@ -1,0 +1,4709 @@
+   0  $accept : program $end
+
+   1  program : def_or_dec_multiple
+
+   2  def_or_dec_multiple : def_or_dec_multiple definition_or_declaration
+   3                      | definition_or_declaration
+
+   4  definition_or_declaration : definition_option
+   5                            | declaration_option
+
+   6  definition_option : function_definition
+
+   7  declaration_option : scalar_declaration
+   8                     | array_declaration
+   9                     | function_declaration
+
+  10  scalar_declaration : type idents SEMI_COLON
+
+  11  type : first_opt
+
+  12  first_opt : CONST second_opt
+  13            | second_opt
+  14            | CONST
+
+  15  second_opt : SIGNED third_opt
+  16             | UNSIGNED third_opt
+  17             | TYPE_FLOAT third_opt
+  18             | TYPE_DOUBLE third_opt
+  19             | VOID third_opt
+  20             | SIGNED
+  21             | UNSIGNED
+  22             | TYPE_FLOAT
+  23             | TYPE_DOUBLE
+  24             | VOID
+  25             | third_opt
+
+  26  third_opt : LONG_LONG
+  27            | LONG
+  28            | SHORT
+  29            | LONG_LONG TYPE_INT
+  30            | LONG TYPE_INT
+  31            | SHORT TYPE_INT
+  32            | TYPE_CHAR
+  33            | TYPE_INT
+
+  34  idents : idents COMMA ident_single
+  35         | ident_single
+
+  36  ident_single : IDENT
+  37               | IDENT ASSIGN expr
+  38               | STAR_SYMBOL IDENT
+  39               | STAR_SYMBOL IDENT ASSIGN expr
+
+  40  array_declaration : type array_multiple SEMI_COLON
+
+  41  array_multiple : array_multiple COMMA array_single
+  42                 | array_single
+
+  43  array_single : IDENT array_dimensions
+  44               | IDENT array_dimensions ASSIGN L_BRACKET array_content R_BRACKET
+
+  45  array_dimensions : L_SQUARE expr R_SQUARE array_dimensions
+  46                   | L_SQUARE expr R_SQUARE
+
+  47  array_content : L_BRACKET array_content R_BRACKET
+  48                | array_content COMMA L_BRACKET array_content R_BRACKET
+  49                | array_content COMMA expr
+  50                | expr
+
+  51  function_declaration : type IDENT L_PAREN function_parameters R_PAREN SEMI_COLON
+  52                       | type STAR_SYMBOL IDENT L_PAREN function_parameters R_PAREN SEMI_COLON
+
+  53  function_definition : type IDENT L_PAREN function_parameters R_PAREN statement_compound
+  54                      | type STAR_SYMBOL IDENT L_PAREN function_parameters R_PAREN statement_compound
+
+  55  function_parameters : function_parameters COMMA type ident_single
+  56                      | type ident_single
+  57                      |
+
+  58  function_call_argus : function_call_argus COMMA expr
+  59                      | expr
+
+  60  expr : expr_assign
+  61       |
+
+  62  expr_assign : expr_logicOR ASSIGN expr_assign
+  63              | expr_logicOR
+
+  64  expr_logicOR : expr_logicOR LOGIC_OR expr_logicAND
+  65               | expr_logicAND
+
+  66  expr_logicAND : expr_logicAND LOGIC_AND expr_bitwiseOR
+  67                | expr_bitwiseOR
+
+  68  expr_bitwiseOR : expr_bitwiseOR BITWISE_OR expr_bitwiseXOR
+  69                 | expr_bitwiseXOR
+
+  70  expr_bitwiseXOR : expr_bitwiseXOR BITWISE_XOR expr_bitwiseAND
+  71                  | expr_bitwiseAND
+
+  72  expr_bitwiseAND : expr_bitwiseAND AND_SYMBOL expr_isequal
+  73                  | expr_isequal
+
+  74  expr_isequal : expr_isequal EQUAL expr_compare
+  75               | expr_isequal NOT_EQUAL expr_compare
+  76               | expr_compare
+
+  77  expr_compare : expr_compare LESS expr_shift
+  78               | expr_compare LESS_EQUAL expr_shift
+  79               | expr_compare GREATER expr_shift
+  80               | expr_compare GREATER_EQUAL expr_shift
+  81               | expr_shift
+
+  82  expr_shift : expr_shift SHIFT_LEFT expr_add_sub
+  83             | expr_shift SHIFT_RIGHT expr_add_sub
+  84             | expr_add_sub
+
+  85  expr_add_sub : expr_add_sub PLUS_SYMBOL expr_mul_div_mod
+  86               | expr_add_sub MINUS_SYMBOL expr_mul_div_mod
+  87               | expr_mul_div_mod
+
+  88  expr_mul_div_mod : expr_mul_div_mod STAR_SYMBOL expr_second
+  89                   | expr_mul_div_mod DIV expr_second
+  90                   | expr_mul_div_mod MOD expr_second
+  91                   | expr_second
+
+  92  expr_second : AND_SYMBOL expr_second
+  93              | STAR_SYMBOL expr_second
+  94              | L_PAREN type R_PAREN expr_second
+  95              | L_PAREN type STAR_SYMBOL R_PAREN expr_second
+  96              | LOGIC_NOT expr_second
+  97              | BITWISE_NOT expr_second
+  98              | PLUS_SYMBOL expr_second
+  99              | MINUS_SYMBOL expr_second
+ 100              | INCREMENT expr_second
+ 101              | DECREMENT expr_second
+ 102              | expr_first
+
+ 103  expr_first : IDENT array_dimensions
+ 104             | expr_first L_PAREN function_call_argus R_PAREN
+ 105             | L_PAREN expr R_PAREN
+ 106             | expr_first INCREMENT
+ 107             | expr_first DECREMENT
+ 108             | IDENT
+ 109             | literal
+
+ 110  literal : INT
+ 111          | FLOAT
+ 112          | CHAR
+ 113          | STRING
+ 114          | NULL_VAL
+
+ 115  statement_compound : L_BRACKET dec_or_state_multiple R_BRACKET
+ 116                     | L_BRACKET R_BRACKET
+
+ 117  dec_or_state_multiple : dec_or_state_multiple declaration_or_statement
+ 118                        | declaration_or_statement
+
+ 119  declaration_or_statement : declaration_option
+ 120                           | statement_option
+
+ 121  statement_option : statement_expr
+ 122                   | statement_if
+ 123                   | statement_switch
+ 124                   | statement_while
+ 125                   | statement_for
+ 126                   | statement_break
+ 127                   | statement_return
+ 128                   | statement_continue
+ 129                   | statement_compound
+
+ 130  statement_expr : expr SEMI_COLON
+
+ 131  statement_if : IF L_PAREN expr R_PAREN statement_compound
+ 132               | IF L_PAREN expr R_PAREN statement_compound ELSE statement_compound
+
+ 133  statement_switch : SWITCH L_PAREN expr R_PAREN L_BRACKET statement_clause_multiple R_BRACKET
+ 134                   | SWITCH L_PAREN expr R_PAREN L_BRACKET R_BRACKET
+
+ 135  statement_clause_multiple : statement_clause_multiple statement_clause
+ 136                            | statement_clause
+
+ 137  statement_clause : statement_case
+ 138                   | statement_default
+
+ 139  statement_case : CASE expr COLON statement_multiple
+ 140                 | CASE expr COLON
+
+ 141  statement_default : DEFAULT COLON statement_multiple
+ 142                    | DEFAULT COLON
+
+ 143  statement_multiple : statement_multiple statement_option
+ 144                     | statement_option
+
+ 145  statement_while : WHILE L_PAREN expr R_PAREN statement_option
+ 146                  | DO statement_option WHILE L_PAREN expr R_PAREN SEMI_COLON
+
+ 147  statement_for : FOR L_PAREN expr SEMI_COLON expr SEMI_COLON expr R_PAREN statement_option
+
+ 148  statement_return : RETURN expr SEMI_COLON
+
+ 149  statement_break : BREAK SEMI_COLON
+
+ 150  statement_continue : CONTINUE SEMI_COLON
+
+state 0
+	$accept : . program $end  (0)
+
+	TYPE_INT  shift 1
+	TYPE_CHAR  shift 2
+	TYPE_FLOAT  shift 3
+	TYPE_DOUBLE  shift 4
+	CONST  shift 5
+	SIGNED  shift 6
+	UNSIGNED  shift 7
+	LONG_LONG  shift 8
+	LONG  shift 9
+	SHORT  shift 10
+	VOID  shift 11
+	.  error
+
+	program  goto 12
+	def_or_dec_multiple  goto 13
+	definition_or_declaration  goto 14
+	definition_option  goto 15
+	declaration_option  goto 16
+	type  goto 17
+	first_opt  goto 18
+	second_opt  goto 19
+	third_opt  goto 20
+	scalar_declaration  goto 21
+	array_declaration  goto 22
+	function_declaration  goto 23
+	function_definition  goto 24
+
+
+state 1
+	third_opt : TYPE_INT .  (33)
+
+	.  reduce 33
+
+
+state 2
+	third_opt : TYPE_CHAR .  (32)
+
+	.  reduce 32
+
+
+state 3
+	second_opt : TYPE_FLOAT . third_opt  (17)
+	second_opt : TYPE_FLOAT .  (22)
+
+	TYPE_INT  shift 1
+	TYPE_CHAR  shift 2
+	LONG_LONG  shift 8
+	LONG  shift 9
+	SHORT  shift 10
+	IDENT  reduce 22
+	R_PAREN  reduce 22
+	STAR_SYMBOL  reduce 22
+
+	third_opt  goto 25
+
+
+state 4
+	second_opt : TYPE_DOUBLE . third_opt  (18)
+	second_opt : TYPE_DOUBLE .  (23)
+
+	TYPE_INT  shift 1
+	TYPE_CHAR  shift 2
+	LONG_LONG  shift 8
+	LONG  shift 9
+	SHORT  shift 10
+	IDENT  reduce 23
+	R_PAREN  reduce 23
+	STAR_SYMBOL  reduce 23
+
+	third_opt  goto 26
+
+
+state 5
+	first_opt : CONST . second_opt  (12)
+	first_opt : CONST .  (14)
+
+	TYPE_INT  shift 1
+	TYPE_CHAR  shift 2
+	TYPE_FLOAT  shift 3
+	TYPE_DOUBLE  shift 4
+	SIGNED  shift 6
+	UNSIGNED  shift 7
+	LONG_LONG  shift 8
+	LONG  shift 9
+	SHORT  shift 10
+	VOID  shift 11
+	IDENT  reduce 14
+	R_PAREN  reduce 14
+	STAR_SYMBOL  reduce 14
+
+	second_opt  goto 27
+	third_opt  goto 20
+
+
+state 6
+	second_opt : SIGNED . third_opt  (15)
+	second_opt : SIGNED .  (20)
+
+	TYPE_INT  shift 1
+	TYPE_CHAR  shift 2
+	LONG_LONG  shift 8
+	LONG  shift 9
+	SHORT  shift 10
+	IDENT  reduce 20
+	R_PAREN  reduce 20
+	STAR_SYMBOL  reduce 20
+
+	third_opt  goto 28
+
+
+state 7
+	second_opt : UNSIGNED . third_opt  (16)
+	second_opt : UNSIGNED .  (21)
+
+	TYPE_INT  shift 1
+	TYPE_CHAR  shift 2
+	LONG_LONG  shift 8
+	LONG  shift 9
+	SHORT  shift 10
+	IDENT  reduce 21
+	R_PAREN  reduce 21
+	STAR_SYMBOL  reduce 21
+
+	third_opt  goto 29
+
+
+state 8
+	third_opt : LONG_LONG .  (26)
+	third_opt : LONG_LONG . TYPE_INT  (29)
+
+	TYPE_INT  shift 30
+	IDENT  reduce 26
+	R_PAREN  reduce 26
+	STAR_SYMBOL  reduce 26
+
+
+state 9
+	third_opt : LONG .  (27)
+	third_opt : LONG . TYPE_INT  (30)
+
+	TYPE_INT  shift 31
+	IDENT  reduce 27
+	R_PAREN  reduce 27
+	STAR_SYMBOL  reduce 27
+
+
+state 10
+	third_opt : SHORT .  (28)
+	third_opt : SHORT . TYPE_INT  (31)
+
+	TYPE_INT  shift 32
+	IDENT  reduce 28
+	R_PAREN  reduce 28
+	STAR_SYMBOL  reduce 28
+
+
+state 11
+	second_opt : VOID . third_opt  (19)
+	second_opt : VOID .  (24)
+
+	TYPE_INT  shift 1
+	TYPE_CHAR  shift 2
+	LONG_LONG  shift 8
+	LONG  shift 9
+	SHORT  shift 10
+	IDENT  reduce 24
+	R_PAREN  reduce 24
+	STAR_SYMBOL  reduce 24
+
+	third_opt  goto 33
+
+
+state 12
+	$accept : program . $end  (0)
+
+	$end  accept
+
+
+state 13
+	program : def_or_dec_multiple .  (1)
+	def_or_dec_multiple : def_or_dec_multiple . definition_or_declaration  (2)
+
+	TYPE_INT  shift 1
+	TYPE_CHAR  shift 2
+	TYPE_FLOAT  shift 3
+	TYPE_DOUBLE  shift 4
+	CONST  shift 5
+	SIGNED  shift 6
+	UNSIGNED  shift 7
+	LONG_LONG  shift 8
+	LONG  shift 9
+	SHORT  shift 10
+	VOID  shift 11
+	$end  reduce 1
+
+	definition_or_declaration  goto 34
+	definition_option  goto 15
+	declaration_option  goto 16
+	type  goto 17
+	first_opt  goto 18
+	second_opt  goto 19
+	third_opt  goto 20
+	scalar_declaration  goto 21
+	array_declaration  goto 22
+	function_declaration  goto 23
+	function_definition  goto 24
+
+
+state 14
+	def_or_dec_multiple : definition_or_declaration .  (3)
+
+	.  reduce 3
+
+
+state 15
+	definition_or_declaration : definition_option .  (4)
+
+	.  reduce 4
+
+
+state 16
+	definition_or_declaration : declaration_option .  (5)
+
+	.  reduce 5
+
+
+state 17
+	scalar_declaration : type . idents SEMI_COLON  (10)
+	array_declaration : type . array_multiple SEMI_COLON  (40)
+	function_declaration : type . IDENT L_PAREN function_parameters R_PAREN SEMI_COLON  (51)
+	function_declaration : type . STAR_SYMBOL IDENT L_PAREN function_parameters R_PAREN SEMI_COLON  (52)
+	function_definition : type . IDENT L_PAREN function_parameters R_PAREN statement_compound  (53)
+	function_definition : type . STAR_SYMBOL IDENT L_PAREN function_parameters R_PAREN statement_compound  (54)
+
+	IDENT  shift 35
+	STAR_SYMBOL  shift 36
+	.  error
+
+	idents  goto 37
+	ident_single  goto 38
+	array_multiple  goto 39
+	array_single  goto 40
+
+
+state 18
+	type : first_opt .  (11)
+
+	.  reduce 11
+
+
+state 19
+	first_opt : second_opt .  (13)
+
+	.  reduce 13
+
+
+state 20
+	second_opt : third_opt .  (25)
+
+	.  reduce 25
+
+
+state 21
+	declaration_option : scalar_declaration .  (7)
+
+	.  reduce 7
+
+
+state 22
+	declaration_option : array_declaration .  (8)
+
+	.  reduce 8
+
+
+state 23
+	declaration_option : function_declaration .  (9)
+
+	.  reduce 9
+
+
+state 24
+	definition_option : function_definition .  (6)
+
+	.  reduce 6
+
+
+state 25
+	second_opt : TYPE_FLOAT third_opt .  (17)
+
+	.  reduce 17
+
+
+state 26
+	second_opt : TYPE_DOUBLE third_opt .  (18)
+
+	.  reduce 18
+
+
+state 27
+	first_opt : CONST second_opt .  (12)
+
+	.  reduce 12
+
+
+state 28
+	second_opt : SIGNED third_opt .  (15)
+
+	.  reduce 15
+
+
+state 29
+	second_opt : UNSIGNED third_opt .  (16)
+
+	.  reduce 16
+
+
+state 30
+	third_opt : LONG_LONG TYPE_INT .  (29)
+
+	.  reduce 29
+
+
+state 31
+	third_opt : LONG TYPE_INT .  (30)
+
+	.  reduce 30
+
+
+state 32
+	third_opt : SHORT TYPE_INT .  (31)
+
+	.  reduce 31
+
+
+state 33
+	second_opt : VOID third_opt .  (19)
+
+	.  reduce 19
+
+
+state 34
+	def_or_dec_multiple : def_or_dec_multiple definition_or_declaration .  (2)
+
+	.  reduce 2
+
+
+state 35
+	ident_single : IDENT .  (36)
+	ident_single : IDENT . ASSIGN expr  (37)
+	array_single : IDENT . array_dimensions  (43)
+	array_single : IDENT . array_dimensions ASSIGN L_BRACKET array_content R_BRACKET  (44)
+	function_declaration : type IDENT . L_PAREN function_parameters R_PAREN SEMI_COLON  (51)
+	function_definition : type IDENT . L_PAREN function_parameters R_PAREN statement_compound  (53)
+
+	ASSIGN  shift 41
+	L_SQUARE  shift 42
+	L_PAREN  shift 43
+	COMMA  reduce 36
+	SEMI_COLON  reduce 36
+
+	array_dimensions  goto 44
+
+
+state 36
+	ident_single : STAR_SYMBOL . IDENT  (38)
+	ident_single : STAR_SYMBOL . IDENT ASSIGN expr  (39)
+	function_declaration : type STAR_SYMBOL . IDENT L_PAREN function_parameters R_PAREN SEMI_COLON  (52)
+	function_definition : type STAR_SYMBOL . IDENT L_PAREN function_parameters R_PAREN statement_compound  (54)
+
+	IDENT  shift 45
+	.  error
+
+
+state 37
+	scalar_declaration : type idents . SEMI_COLON  (10)
+	idents : idents . COMMA ident_single  (34)
+
+	COMMA  shift 46
+	SEMI_COLON  shift 47
+	.  error
+
+
+state 38
+	idents : ident_single .  (35)
+
+	.  reduce 35
+
+
+state 39
+	array_declaration : type array_multiple . SEMI_COLON  (40)
+	array_multiple : array_multiple . COMMA array_single  (41)
+
+	COMMA  shift 48
+	SEMI_COLON  shift 49
+	.  error
+
+
+state 40
+	array_multiple : array_single .  (42)
+
+	.  reduce 42
+
+
+state 41
+	ident_single : IDENT ASSIGN . expr  (37)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	R_PAREN  reduce 61
+	COMMA  reduce 61
+	SEMI_COLON  reduce 61
+
+	literal  goto 65
+	expr  goto 66
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 42
+	array_dimensions : L_SQUARE . expr R_SQUARE array_dimensions  (45)
+	array_dimensions : L_SQUARE . expr R_SQUARE  (46)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	R_SQUARE  reduce 61
+
+	literal  goto 65
+	expr  goto 80
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 43
+	function_declaration : type IDENT L_PAREN . function_parameters R_PAREN SEMI_COLON  (51)
+	function_definition : type IDENT L_PAREN . function_parameters R_PAREN statement_compound  (53)
+	function_parameters : .  (57)
+
+	TYPE_INT  shift 1
+	TYPE_CHAR  shift 2
+	TYPE_FLOAT  shift 3
+	TYPE_DOUBLE  shift 4
+	CONST  shift 5
+	SIGNED  shift 6
+	UNSIGNED  shift 7
+	LONG_LONG  shift 8
+	LONG  shift 9
+	SHORT  shift 10
+	VOID  shift 11
+	R_PAREN  reduce 57
+	COMMA  reduce 57
+
+	type  goto 81
+	first_opt  goto 18
+	second_opt  goto 19
+	third_opt  goto 20
+	function_parameters  goto 82
+
+
+state 44
+	array_single : IDENT array_dimensions .  (43)
+	array_single : IDENT array_dimensions . ASSIGN L_BRACKET array_content R_BRACKET  (44)
+
+	ASSIGN  shift 83
+	COMMA  reduce 43
+	SEMI_COLON  reduce 43
+
+
+state 45
+	ident_single : STAR_SYMBOL IDENT .  (38)
+	ident_single : STAR_SYMBOL IDENT . ASSIGN expr  (39)
+	function_declaration : type STAR_SYMBOL IDENT . L_PAREN function_parameters R_PAREN SEMI_COLON  (52)
+	function_definition : type STAR_SYMBOL IDENT . L_PAREN function_parameters R_PAREN statement_compound  (54)
+
+	ASSIGN  shift 84
+	L_PAREN  shift 85
+	COMMA  reduce 38
+	SEMI_COLON  reduce 38
+
+
+state 46
+	idents : idents COMMA . ident_single  (34)
+
+	IDENT  shift 86
+	STAR_SYMBOL  shift 87
+	.  error
+
+	ident_single  goto 88
+
+
+state 47
+	scalar_declaration : type idents SEMI_COLON .  (10)
+
+	.  reduce 10
+
+
+state 48
+	array_multiple : array_multiple COMMA . array_single  (41)
+
+	IDENT  shift 89
+	.  error
+
+	array_single  goto 90
+
+
+state 49
+	array_declaration : type array_multiple SEMI_COLON .  (40)
+
+	.  reduce 40
+
+
+state 50
+	expr_first : IDENT . array_dimensions  (103)
+	expr_first : IDENT .  (108)
+
+	L_SQUARE  shift 42
+	ASSIGN  reduce 108
+	LOGIC_OR  reduce 108
+	LOGIC_AND  reduce 108
+	BITWISE_OR  reduce 108
+	BITWISE_XOR  reduce 108
+	EQUAL  reduce 108
+	NOT_EQUAL  reduce 108
+	LESS  reduce 108
+	LESS_EQUAL  reduce 108
+	GREATER  reduce 108
+	GREATER_EQUAL  reduce 108
+	SHIFT_LEFT  reduce 108
+	SHIFT_RIGHT  reduce 108
+	DIV  reduce 108
+	MOD  reduce 108
+	R_SQUARE  reduce 108
+	L_PAREN  reduce 108
+	R_PAREN  reduce 108
+	AND_SYMBOL  reduce 108
+	STAR_SYMBOL  reduce 108
+	PLUS_SYMBOL  reduce 108
+	MINUS_SYMBOL  reduce 108
+	INCREMENT  reduce 108
+	DECREMENT  reduce 108
+	COMMA  reduce 108
+	COLON  reduce 108
+	SEMI_COLON  reduce 108
+	R_BRACKET  reduce 108
+
+	array_dimensions  goto 91
+
+
+state 51
+	literal : STRING .  (113)
+
+	.  reduce 113
+
+
+state 52
+	literal : CHAR .  (112)
+
+	.  reduce 112
+
+
+state 53
+	literal : NULL_VAL .  (114)
+
+	.  reduce 114
+
+
+state 54
+	literal : INT .  (110)
+
+	.  reduce 110
+
+
+state 55
+	literal : FLOAT .  (111)
+
+	.  reduce 111
+
+
+state 56
+	expr_second : LOGIC_NOT . expr_second  (96)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_second  goto 92
+	expr_first  goto 79
+
+
+state 57
+	expr_second : BITWISE_NOT . expr_second  (97)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_second  goto 93
+	expr_first  goto 79
+
+
+state 58
+	expr_second : L_PAREN . type R_PAREN expr_second  (94)
+	expr_second : L_PAREN . type STAR_SYMBOL R_PAREN expr_second  (95)
+	expr_first : L_PAREN . expr R_PAREN  (105)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	TYPE_INT  shift 1
+	TYPE_CHAR  shift 2
+	TYPE_FLOAT  shift 3
+	TYPE_DOUBLE  shift 4
+	CONST  shift 5
+	SIGNED  shift 6
+	UNSIGNED  shift 7
+	LONG_LONG  shift 8
+	LONG  shift 9
+	SHORT  shift 10
+	VOID  shift 11
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	R_PAREN  reduce 61
+
+	type  goto 94
+	literal  goto 65
+	first_opt  goto 18
+	second_opt  goto 19
+	third_opt  goto 20
+	expr  goto 95
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 59
+	expr_second : AND_SYMBOL . expr_second  (92)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_second  goto 96
+	expr_first  goto 79
+
+
+state 60
+	expr_second : STAR_SYMBOL . expr_second  (93)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_second  goto 97
+	expr_first  goto 79
+
+
+state 61
+	expr_second : PLUS_SYMBOL . expr_second  (98)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_second  goto 98
+	expr_first  goto 79
+
+
+state 62
+	expr_second : MINUS_SYMBOL . expr_second  (99)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_second  goto 99
+	expr_first  goto 79
+
+
+state 63
+	expr_second : INCREMENT . expr_second  (100)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_second  goto 100
+	expr_first  goto 79
+
+
+state 64
+	expr_second : DECREMENT . expr_second  (101)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_second  goto 101
+	expr_first  goto 79
+
+
+state 65
+	expr_first : literal .  (109)
+
+	.  reduce 109
+
+
+state 66
+	ident_single : IDENT ASSIGN expr .  (37)
+
+	.  reduce 37
+
+
+state 67
+	expr : expr_assign .  (60)
+
+	.  reduce 60
+
+
+state 68
+	expr_assign : expr_logicOR . ASSIGN expr_assign  (62)
+	expr_assign : expr_logicOR .  (63)
+	expr_logicOR : expr_logicOR . LOGIC_OR expr_logicAND  (64)
+
+	ASSIGN  shift 102
+	LOGIC_OR  shift 103
+	R_SQUARE  reduce 63
+	R_PAREN  reduce 63
+	COMMA  reduce 63
+	COLON  reduce 63
+	SEMI_COLON  reduce 63
+	R_BRACKET  reduce 63
+
+
+state 69
+	expr_logicOR : expr_logicAND .  (65)
+	expr_logicAND : expr_logicAND . LOGIC_AND expr_bitwiseOR  (66)
+
+	LOGIC_AND  shift 104
+	ASSIGN  reduce 65
+	LOGIC_OR  reduce 65
+	R_SQUARE  reduce 65
+	R_PAREN  reduce 65
+	COMMA  reduce 65
+	COLON  reduce 65
+	SEMI_COLON  reduce 65
+	R_BRACKET  reduce 65
+
+
+state 70
+	expr_logicAND : expr_bitwiseOR .  (67)
+	expr_bitwiseOR : expr_bitwiseOR . BITWISE_OR expr_bitwiseXOR  (68)
+
+	BITWISE_OR  shift 105
+	ASSIGN  reduce 67
+	LOGIC_OR  reduce 67
+	LOGIC_AND  reduce 67
+	R_SQUARE  reduce 67
+	R_PAREN  reduce 67
+	COMMA  reduce 67
+	COLON  reduce 67
+	SEMI_COLON  reduce 67
+	R_BRACKET  reduce 67
+
+
+state 71
+	expr_bitwiseOR : expr_bitwiseXOR .  (69)
+	expr_bitwiseXOR : expr_bitwiseXOR . BITWISE_XOR expr_bitwiseAND  (70)
+
+	BITWISE_XOR  shift 106
+	ASSIGN  reduce 69
+	LOGIC_OR  reduce 69
+	LOGIC_AND  reduce 69
+	BITWISE_OR  reduce 69
+	R_SQUARE  reduce 69
+	R_PAREN  reduce 69
+	COMMA  reduce 69
+	COLON  reduce 69
+	SEMI_COLON  reduce 69
+	R_BRACKET  reduce 69
+
+
+state 72
+	expr_bitwiseXOR : expr_bitwiseAND .  (71)
+	expr_bitwiseAND : expr_bitwiseAND . AND_SYMBOL expr_isequal  (72)
+
+	AND_SYMBOL  shift 107
+	ASSIGN  reduce 71
+	LOGIC_OR  reduce 71
+	LOGIC_AND  reduce 71
+	BITWISE_OR  reduce 71
+	BITWISE_XOR  reduce 71
+	R_SQUARE  reduce 71
+	R_PAREN  reduce 71
+	COMMA  reduce 71
+	COLON  reduce 71
+	SEMI_COLON  reduce 71
+	R_BRACKET  reduce 71
+
+
+state 73
+	expr_bitwiseAND : expr_isequal .  (73)
+	expr_isequal : expr_isequal . EQUAL expr_compare  (74)
+	expr_isequal : expr_isequal . NOT_EQUAL expr_compare  (75)
+
+	EQUAL  shift 108
+	NOT_EQUAL  shift 109
+	ASSIGN  reduce 73
+	LOGIC_OR  reduce 73
+	LOGIC_AND  reduce 73
+	BITWISE_OR  reduce 73
+	BITWISE_XOR  reduce 73
+	R_SQUARE  reduce 73
+	R_PAREN  reduce 73
+	AND_SYMBOL  reduce 73
+	COMMA  reduce 73
+	COLON  reduce 73
+	SEMI_COLON  reduce 73
+	R_BRACKET  reduce 73
+
+
+state 74
+	expr_isequal : expr_compare .  (76)
+	expr_compare : expr_compare . LESS expr_shift  (77)
+	expr_compare : expr_compare . LESS_EQUAL expr_shift  (78)
+	expr_compare : expr_compare . GREATER expr_shift  (79)
+	expr_compare : expr_compare . GREATER_EQUAL expr_shift  (80)
+
+	LESS  shift 110
+	LESS_EQUAL  shift 111
+	GREATER  shift 112
+	GREATER_EQUAL  shift 113
+	ASSIGN  reduce 76
+	LOGIC_OR  reduce 76
+	LOGIC_AND  reduce 76
+	BITWISE_OR  reduce 76
+	BITWISE_XOR  reduce 76
+	EQUAL  reduce 76
+	NOT_EQUAL  reduce 76
+	R_SQUARE  reduce 76
+	R_PAREN  reduce 76
+	AND_SYMBOL  reduce 76
+	COMMA  reduce 76
+	COLON  reduce 76
+	SEMI_COLON  reduce 76
+	R_BRACKET  reduce 76
+
+
+state 75
+	expr_compare : expr_shift .  (81)
+	expr_shift : expr_shift . SHIFT_LEFT expr_add_sub  (82)
+	expr_shift : expr_shift . SHIFT_RIGHT expr_add_sub  (83)
+
+	SHIFT_LEFT  shift 114
+	SHIFT_RIGHT  shift 115
+	ASSIGN  reduce 81
+	LOGIC_OR  reduce 81
+	LOGIC_AND  reduce 81
+	BITWISE_OR  reduce 81
+	BITWISE_XOR  reduce 81
+	EQUAL  reduce 81
+	NOT_EQUAL  reduce 81
+	LESS  reduce 81
+	LESS_EQUAL  reduce 81
+	GREATER  reduce 81
+	GREATER_EQUAL  reduce 81
+	R_SQUARE  reduce 81
+	R_PAREN  reduce 81
+	AND_SYMBOL  reduce 81
+	COMMA  reduce 81
+	COLON  reduce 81
+	SEMI_COLON  reduce 81
+	R_BRACKET  reduce 81
+
+
+state 76
+	expr_shift : expr_add_sub .  (84)
+	expr_add_sub : expr_add_sub . PLUS_SYMBOL expr_mul_div_mod  (85)
+	expr_add_sub : expr_add_sub . MINUS_SYMBOL expr_mul_div_mod  (86)
+
+	PLUS_SYMBOL  shift 116
+	MINUS_SYMBOL  shift 117
+	ASSIGN  reduce 84
+	LOGIC_OR  reduce 84
+	LOGIC_AND  reduce 84
+	BITWISE_OR  reduce 84
+	BITWISE_XOR  reduce 84
+	EQUAL  reduce 84
+	NOT_EQUAL  reduce 84
+	LESS  reduce 84
+	LESS_EQUAL  reduce 84
+	GREATER  reduce 84
+	GREATER_EQUAL  reduce 84
+	SHIFT_LEFT  reduce 84
+	SHIFT_RIGHT  reduce 84
+	R_SQUARE  reduce 84
+	R_PAREN  reduce 84
+	AND_SYMBOL  reduce 84
+	COMMA  reduce 84
+	COLON  reduce 84
+	SEMI_COLON  reduce 84
+	R_BRACKET  reduce 84
+
+
+state 77
+	expr_add_sub : expr_mul_div_mod .  (87)
+	expr_mul_div_mod : expr_mul_div_mod . STAR_SYMBOL expr_second  (88)
+	expr_mul_div_mod : expr_mul_div_mod . DIV expr_second  (89)
+	expr_mul_div_mod : expr_mul_div_mod . MOD expr_second  (90)
+
+	DIV  shift 118
+	MOD  shift 119
+	STAR_SYMBOL  shift 120
+	ASSIGN  reduce 87
+	LOGIC_OR  reduce 87
+	LOGIC_AND  reduce 87
+	BITWISE_OR  reduce 87
+	BITWISE_XOR  reduce 87
+	EQUAL  reduce 87
+	NOT_EQUAL  reduce 87
+	LESS  reduce 87
+	LESS_EQUAL  reduce 87
+	GREATER  reduce 87
+	GREATER_EQUAL  reduce 87
+	SHIFT_LEFT  reduce 87
+	SHIFT_RIGHT  reduce 87
+	R_SQUARE  reduce 87
+	R_PAREN  reduce 87
+	AND_SYMBOL  reduce 87
+	PLUS_SYMBOL  reduce 87
+	MINUS_SYMBOL  reduce 87
+	COMMA  reduce 87
+	COLON  reduce 87
+	SEMI_COLON  reduce 87
+	R_BRACKET  reduce 87
+
+
+state 78
+	expr_mul_div_mod : expr_second .  (91)
+
+	.  reduce 91
+
+
+state 79
+	expr_second : expr_first .  (102)
+	expr_first : expr_first . L_PAREN function_call_argus R_PAREN  (104)
+	expr_first : expr_first . INCREMENT  (106)
+	expr_first : expr_first . DECREMENT  (107)
+
+	L_PAREN  shift 121
+	INCREMENT  shift 122
+	DECREMENT  shift 123
+	ASSIGN  reduce 102
+	LOGIC_OR  reduce 102
+	LOGIC_AND  reduce 102
+	BITWISE_OR  reduce 102
+	BITWISE_XOR  reduce 102
+	EQUAL  reduce 102
+	NOT_EQUAL  reduce 102
+	LESS  reduce 102
+	LESS_EQUAL  reduce 102
+	GREATER  reduce 102
+	GREATER_EQUAL  reduce 102
+	SHIFT_LEFT  reduce 102
+	SHIFT_RIGHT  reduce 102
+	DIV  reduce 102
+	MOD  reduce 102
+	R_SQUARE  reduce 102
+	R_PAREN  reduce 102
+	AND_SYMBOL  reduce 102
+	STAR_SYMBOL  reduce 102
+	PLUS_SYMBOL  reduce 102
+	MINUS_SYMBOL  reduce 102
+	COMMA  reduce 102
+	COLON  reduce 102
+	SEMI_COLON  reduce 102
+	R_BRACKET  reduce 102
+
+
+state 80
+	array_dimensions : L_SQUARE expr . R_SQUARE array_dimensions  (45)
+	array_dimensions : L_SQUARE expr . R_SQUARE  (46)
+
+	R_SQUARE  shift 124
+	.  error
+
+
+state 81
+	function_parameters : type . ident_single  (56)
+
+	IDENT  shift 86
+	STAR_SYMBOL  shift 87
+	.  error
+
+	ident_single  goto 125
+
+
+state 82
+	function_declaration : type IDENT L_PAREN function_parameters . R_PAREN SEMI_COLON  (51)
+	function_definition : type IDENT L_PAREN function_parameters . R_PAREN statement_compound  (53)
+	function_parameters : function_parameters . COMMA type ident_single  (55)
+
+	R_PAREN  shift 126
+	COMMA  shift 127
+	.  error
+
+
+state 83
+	array_single : IDENT array_dimensions ASSIGN . L_BRACKET array_content R_BRACKET  (44)
+
+	L_BRACKET  shift 128
+	.  error
+
+
+state 84
+	ident_single : STAR_SYMBOL IDENT ASSIGN . expr  (39)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	R_PAREN  reduce 61
+	COMMA  reduce 61
+	SEMI_COLON  reduce 61
+
+	literal  goto 65
+	expr  goto 129
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 85
+	function_declaration : type STAR_SYMBOL IDENT L_PAREN . function_parameters R_PAREN SEMI_COLON  (52)
+	function_definition : type STAR_SYMBOL IDENT L_PAREN . function_parameters R_PAREN statement_compound  (54)
+	function_parameters : .  (57)
+
+	TYPE_INT  shift 1
+	TYPE_CHAR  shift 2
+	TYPE_FLOAT  shift 3
+	TYPE_DOUBLE  shift 4
+	CONST  shift 5
+	SIGNED  shift 6
+	UNSIGNED  shift 7
+	LONG_LONG  shift 8
+	LONG  shift 9
+	SHORT  shift 10
+	VOID  shift 11
+	R_PAREN  reduce 57
+	COMMA  reduce 57
+
+	type  goto 81
+	first_opt  goto 18
+	second_opt  goto 19
+	third_opt  goto 20
+	function_parameters  goto 130
+
+
+state 86
+	ident_single : IDENT .  (36)
+	ident_single : IDENT . ASSIGN expr  (37)
+
+	ASSIGN  shift 41
+	R_PAREN  reduce 36
+	COMMA  reduce 36
+	SEMI_COLON  reduce 36
+
+
+state 87
+	ident_single : STAR_SYMBOL . IDENT  (38)
+	ident_single : STAR_SYMBOL . IDENT ASSIGN expr  (39)
+
+	IDENT  shift 131
+	.  error
+
+
+state 88
+	idents : idents COMMA ident_single .  (34)
+
+	.  reduce 34
+
+
+state 89
+	array_single : IDENT . array_dimensions  (43)
+	array_single : IDENT . array_dimensions ASSIGN L_BRACKET array_content R_BRACKET  (44)
+
+	L_SQUARE  shift 42
+	.  error
+
+	array_dimensions  goto 44
+
+
+state 90
+	array_multiple : array_multiple COMMA array_single .  (41)
+
+	.  reduce 41
+
+
+state 91
+	expr_first : IDENT array_dimensions .  (103)
+
+	.  reduce 103
+
+
+state 92
+	expr_second : LOGIC_NOT expr_second .  (96)
+
+	.  reduce 96
+
+
+state 93
+	expr_second : BITWISE_NOT expr_second .  (97)
+
+	.  reduce 97
+
+
+state 94
+	expr_second : L_PAREN type . R_PAREN expr_second  (94)
+	expr_second : L_PAREN type . STAR_SYMBOL R_PAREN expr_second  (95)
+
+	R_PAREN  shift 132
+	STAR_SYMBOL  shift 133
+	.  error
+
+
+state 95
+	expr_first : L_PAREN expr . R_PAREN  (105)
+
+	R_PAREN  shift 134
+	.  error
+
+
+state 96
+	expr_second : AND_SYMBOL expr_second .  (92)
+
+	.  reduce 92
+
+
+state 97
+	expr_second : STAR_SYMBOL expr_second .  (93)
+
+	.  reduce 93
+
+
+state 98
+	expr_second : PLUS_SYMBOL expr_second .  (98)
+
+	.  reduce 98
+
+
+state 99
+	expr_second : MINUS_SYMBOL expr_second .  (99)
+
+	.  reduce 99
+
+
+state 100
+	expr_second : INCREMENT expr_second .  (100)
+
+	.  reduce 100
+
+
+state 101
+	expr_second : DECREMENT expr_second .  (101)
+
+	.  reduce 101
+
+
+state 102
+	expr_assign : expr_logicOR ASSIGN . expr_assign  (62)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_assign  goto 135
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 103
+	expr_logicOR : expr_logicOR LOGIC_OR . expr_logicAND  (64)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_logicAND  goto 136
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 104
+	expr_logicAND : expr_logicAND LOGIC_AND . expr_bitwiseOR  (66)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_bitwiseOR  goto 137
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 105
+	expr_bitwiseOR : expr_bitwiseOR BITWISE_OR . expr_bitwiseXOR  (68)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_bitwiseXOR  goto 138
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 106
+	expr_bitwiseXOR : expr_bitwiseXOR BITWISE_XOR . expr_bitwiseAND  (70)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_bitwiseAND  goto 139
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 107
+	expr_bitwiseAND : expr_bitwiseAND AND_SYMBOL . expr_isequal  (72)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_isequal  goto 140
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 108
+	expr_isequal : expr_isequal EQUAL . expr_compare  (74)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_compare  goto 141
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 109
+	expr_isequal : expr_isequal NOT_EQUAL . expr_compare  (75)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_compare  goto 142
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 110
+	expr_compare : expr_compare LESS . expr_shift  (77)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_shift  goto 143
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 111
+	expr_compare : expr_compare LESS_EQUAL . expr_shift  (78)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_shift  goto 144
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 112
+	expr_compare : expr_compare GREATER . expr_shift  (79)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_shift  goto 145
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 113
+	expr_compare : expr_compare GREATER_EQUAL . expr_shift  (80)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_shift  goto 146
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 114
+	expr_shift : expr_shift SHIFT_LEFT . expr_add_sub  (82)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_add_sub  goto 147
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 115
+	expr_shift : expr_shift SHIFT_RIGHT . expr_add_sub  (83)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_add_sub  goto 148
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 116
+	expr_add_sub : expr_add_sub PLUS_SYMBOL . expr_mul_div_mod  (85)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_mul_div_mod  goto 149
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 117
+	expr_add_sub : expr_add_sub MINUS_SYMBOL . expr_mul_div_mod  (86)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_mul_div_mod  goto 150
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 118
+	expr_mul_div_mod : expr_mul_div_mod DIV . expr_second  (89)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_second  goto 151
+	expr_first  goto 79
+
+
+state 119
+	expr_mul_div_mod : expr_mul_div_mod MOD . expr_second  (90)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_second  goto 152
+	expr_first  goto 79
+
+
+state 120
+	expr_mul_div_mod : expr_mul_div_mod STAR_SYMBOL . expr_second  (88)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_second  goto 153
+	expr_first  goto 79
+
+
+state 121
+	expr_first : expr_first L_PAREN . function_call_argus R_PAREN  (104)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	R_PAREN  reduce 61
+	COMMA  reduce 61
+
+	literal  goto 65
+	function_call_argus  goto 154
+	expr  goto 155
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 122
+	expr_first : expr_first INCREMENT .  (106)
+
+	.  reduce 106
+
+
+state 123
+	expr_first : expr_first DECREMENT .  (107)
+
+	.  reduce 107
+
+
+state 124
+	array_dimensions : L_SQUARE expr R_SQUARE . array_dimensions  (45)
+	array_dimensions : L_SQUARE expr R_SQUARE .  (46)
+
+	L_SQUARE  shift 42
+	ASSIGN  reduce 46
+	LOGIC_OR  reduce 46
+	LOGIC_AND  reduce 46
+	BITWISE_OR  reduce 46
+	BITWISE_XOR  reduce 46
+	EQUAL  reduce 46
+	NOT_EQUAL  reduce 46
+	LESS  reduce 46
+	LESS_EQUAL  reduce 46
+	GREATER  reduce 46
+	GREATER_EQUAL  reduce 46
+	SHIFT_LEFT  reduce 46
+	SHIFT_RIGHT  reduce 46
+	DIV  reduce 46
+	MOD  reduce 46
+	R_SQUARE  reduce 46
+	L_PAREN  reduce 46
+	R_PAREN  reduce 46
+	AND_SYMBOL  reduce 46
+	STAR_SYMBOL  reduce 46
+	PLUS_SYMBOL  reduce 46
+	MINUS_SYMBOL  reduce 46
+	INCREMENT  reduce 46
+	DECREMENT  reduce 46
+	COMMA  reduce 46
+	COLON  reduce 46
+	SEMI_COLON  reduce 46
+	R_BRACKET  reduce 46
+
+	array_dimensions  goto 156
+
+
+state 125
+	function_parameters : type ident_single .  (56)
+
+	.  reduce 56
+
+
+state 126
+	function_declaration : type IDENT L_PAREN function_parameters R_PAREN . SEMI_COLON  (51)
+	function_definition : type IDENT L_PAREN function_parameters R_PAREN . statement_compound  (53)
+
+	SEMI_COLON  shift 157
+	L_BRACKET  shift 158
+	.  error
+
+	statement_compound  goto 159
+
+
+state 127
+	function_parameters : function_parameters COMMA . type ident_single  (55)
+
+	TYPE_INT  shift 1
+	TYPE_CHAR  shift 2
+	TYPE_FLOAT  shift 3
+	TYPE_DOUBLE  shift 4
+	CONST  shift 5
+	SIGNED  shift 6
+	UNSIGNED  shift 7
+	LONG_LONG  shift 8
+	LONG  shift 9
+	SHORT  shift 10
+	VOID  shift 11
+	.  error
+
+	type  goto 160
+	first_opt  goto 18
+	second_opt  goto 19
+	third_opt  goto 20
+
+
+state 128
+	array_single : IDENT array_dimensions ASSIGN L_BRACKET . array_content R_BRACKET  (44)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	L_BRACKET  shift 161
+	COMMA  reduce 61
+	R_BRACKET  reduce 61
+
+	literal  goto 65
+	array_content  goto 162
+	expr  goto 163
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 129
+	ident_single : STAR_SYMBOL IDENT ASSIGN expr .  (39)
+
+	.  reduce 39
+
+
+state 130
+	function_declaration : type STAR_SYMBOL IDENT L_PAREN function_parameters . R_PAREN SEMI_COLON  (52)
+	function_definition : type STAR_SYMBOL IDENT L_PAREN function_parameters . R_PAREN statement_compound  (54)
+	function_parameters : function_parameters . COMMA type ident_single  (55)
+
+	R_PAREN  shift 164
+	COMMA  shift 127
+	.  error
+
+
+state 131
+	ident_single : STAR_SYMBOL IDENT .  (38)
+	ident_single : STAR_SYMBOL IDENT . ASSIGN expr  (39)
+
+	ASSIGN  shift 84
+	R_PAREN  reduce 38
+	COMMA  reduce 38
+	SEMI_COLON  reduce 38
+
+
+state 132
+	expr_second : L_PAREN type R_PAREN . expr_second  (94)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_second  goto 165
+	expr_first  goto 79
+
+
+state 133
+	expr_second : L_PAREN type STAR_SYMBOL . R_PAREN expr_second  (95)
+
+	R_PAREN  shift 166
+	.  error
+
+
+state 134
+	expr_first : L_PAREN expr R_PAREN .  (105)
+
+	.  reduce 105
+
+
+state 135
+	expr_assign : expr_logicOR ASSIGN expr_assign .  (62)
+
+	.  reduce 62
+
+
+state 136
+	expr_logicOR : expr_logicOR LOGIC_OR expr_logicAND .  (64)
+	expr_logicAND : expr_logicAND . LOGIC_AND expr_bitwiseOR  (66)
+
+	LOGIC_AND  shift 104
+	ASSIGN  reduce 64
+	LOGIC_OR  reduce 64
+	R_SQUARE  reduce 64
+	R_PAREN  reduce 64
+	COMMA  reduce 64
+	COLON  reduce 64
+	SEMI_COLON  reduce 64
+	R_BRACKET  reduce 64
+
+
+state 137
+	expr_logicAND : expr_logicAND LOGIC_AND expr_bitwiseOR .  (66)
+	expr_bitwiseOR : expr_bitwiseOR . BITWISE_OR expr_bitwiseXOR  (68)
+
+	BITWISE_OR  shift 105
+	ASSIGN  reduce 66
+	LOGIC_OR  reduce 66
+	LOGIC_AND  reduce 66
+	R_SQUARE  reduce 66
+	R_PAREN  reduce 66
+	COMMA  reduce 66
+	COLON  reduce 66
+	SEMI_COLON  reduce 66
+	R_BRACKET  reduce 66
+
+
+state 138
+	expr_bitwiseOR : expr_bitwiseOR BITWISE_OR expr_bitwiseXOR .  (68)
+	expr_bitwiseXOR : expr_bitwiseXOR . BITWISE_XOR expr_bitwiseAND  (70)
+
+	BITWISE_XOR  shift 106
+	ASSIGN  reduce 68
+	LOGIC_OR  reduce 68
+	LOGIC_AND  reduce 68
+	BITWISE_OR  reduce 68
+	R_SQUARE  reduce 68
+	R_PAREN  reduce 68
+	COMMA  reduce 68
+	COLON  reduce 68
+	SEMI_COLON  reduce 68
+	R_BRACKET  reduce 68
+
+
+state 139
+	expr_bitwiseXOR : expr_bitwiseXOR BITWISE_XOR expr_bitwiseAND .  (70)
+	expr_bitwiseAND : expr_bitwiseAND . AND_SYMBOL expr_isequal  (72)
+
+	AND_SYMBOL  shift 107
+	ASSIGN  reduce 70
+	LOGIC_OR  reduce 70
+	LOGIC_AND  reduce 70
+	BITWISE_OR  reduce 70
+	BITWISE_XOR  reduce 70
+	R_SQUARE  reduce 70
+	R_PAREN  reduce 70
+	COMMA  reduce 70
+	COLON  reduce 70
+	SEMI_COLON  reduce 70
+	R_BRACKET  reduce 70
+
+
+state 140
+	expr_bitwiseAND : expr_bitwiseAND AND_SYMBOL expr_isequal .  (72)
+	expr_isequal : expr_isequal . EQUAL expr_compare  (74)
+	expr_isequal : expr_isequal . NOT_EQUAL expr_compare  (75)
+
+	EQUAL  shift 108
+	NOT_EQUAL  shift 109
+	ASSIGN  reduce 72
+	LOGIC_OR  reduce 72
+	LOGIC_AND  reduce 72
+	BITWISE_OR  reduce 72
+	BITWISE_XOR  reduce 72
+	R_SQUARE  reduce 72
+	R_PAREN  reduce 72
+	AND_SYMBOL  reduce 72
+	COMMA  reduce 72
+	COLON  reduce 72
+	SEMI_COLON  reduce 72
+	R_BRACKET  reduce 72
+
+
+state 141
+	expr_isequal : expr_isequal EQUAL expr_compare .  (74)
+	expr_compare : expr_compare . LESS expr_shift  (77)
+	expr_compare : expr_compare . LESS_EQUAL expr_shift  (78)
+	expr_compare : expr_compare . GREATER expr_shift  (79)
+	expr_compare : expr_compare . GREATER_EQUAL expr_shift  (80)
+
+	LESS  shift 110
+	LESS_EQUAL  shift 111
+	GREATER  shift 112
+	GREATER_EQUAL  shift 113
+	ASSIGN  reduce 74
+	LOGIC_OR  reduce 74
+	LOGIC_AND  reduce 74
+	BITWISE_OR  reduce 74
+	BITWISE_XOR  reduce 74
+	EQUAL  reduce 74
+	NOT_EQUAL  reduce 74
+	R_SQUARE  reduce 74
+	R_PAREN  reduce 74
+	AND_SYMBOL  reduce 74
+	COMMA  reduce 74
+	COLON  reduce 74
+	SEMI_COLON  reduce 74
+	R_BRACKET  reduce 74
+
+
+state 142
+	expr_isequal : expr_isequal NOT_EQUAL expr_compare .  (75)
+	expr_compare : expr_compare . LESS expr_shift  (77)
+	expr_compare : expr_compare . LESS_EQUAL expr_shift  (78)
+	expr_compare : expr_compare . GREATER expr_shift  (79)
+	expr_compare : expr_compare . GREATER_EQUAL expr_shift  (80)
+
+	LESS  shift 110
+	LESS_EQUAL  shift 111
+	GREATER  shift 112
+	GREATER_EQUAL  shift 113
+	ASSIGN  reduce 75
+	LOGIC_OR  reduce 75
+	LOGIC_AND  reduce 75
+	BITWISE_OR  reduce 75
+	BITWISE_XOR  reduce 75
+	EQUAL  reduce 75
+	NOT_EQUAL  reduce 75
+	R_SQUARE  reduce 75
+	R_PAREN  reduce 75
+	AND_SYMBOL  reduce 75
+	COMMA  reduce 75
+	COLON  reduce 75
+	SEMI_COLON  reduce 75
+	R_BRACKET  reduce 75
+
+
+state 143
+	expr_compare : expr_compare LESS expr_shift .  (77)
+	expr_shift : expr_shift . SHIFT_LEFT expr_add_sub  (82)
+	expr_shift : expr_shift . SHIFT_RIGHT expr_add_sub  (83)
+
+	SHIFT_LEFT  shift 114
+	SHIFT_RIGHT  shift 115
+	ASSIGN  reduce 77
+	LOGIC_OR  reduce 77
+	LOGIC_AND  reduce 77
+	BITWISE_OR  reduce 77
+	BITWISE_XOR  reduce 77
+	EQUAL  reduce 77
+	NOT_EQUAL  reduce 77
+	LESS  reduce 77
+	LESS_EQUAL  reduce 77
+	GREATER  reduce 77
+	GREATER_EQUAL  reduce 77
+	R_SQUARE  reduce 77
+	R_PAREN  reduce 77
+	AND_SYMBOL  reduce 77
+	COMMA  reduce 77
+	COLON  reduce 77
+	SEMI_COLON  reduce 77
+	R_BRACKET  reduce 77
+
+
+state 144
+	expr_compare : expr_compare LESS_EQUAL expr_shift .  (78)
+	expr_shift : expr_shift . SHIFT_LEFT expr_add_sub  (82)
+	expr_shift : expr_shift . SHIFT_RIGHT expr_add_sub  (83)
+
+	SHIFT_LEFT  shift 114
+	SHIFT_RIGHT  shift 115
+	ASSIGN  reduce 78
+	LOGIC_OR  reduce 78
+	LOGIC_AND  reduce 78
+	BITWISE_OR  reduce 78
+	BITWISE_XOR  reduce 78
+	EQUAL  reduce 78
+	NOT_EQUAL  reduce 78
+	LESS  reduce 78
+	LESS_EQUAL  reduce 78
+	GREATER  reduce 78
+	GREATER_EQUAL  reduce 78
+	R_SQUARE  reduce 78
+	R_PAREN  reduce 78
+	AND_SYMBOL  reduce 78
+	COMMA  reduce 78
+	COLON  reduce 78
+	SEMI_COLON  reduce 78
+	R_BRACKET  reduce 78
+
+
+state 145
+	expr_compare : expr_compare GREATER expr_shift .  (79)
+	expr_shift : expr_shift . SHIFT_LEFT expr_add_sub  (82)
+	expr_shift : expr_shift . SHIFT_RIGHT expr_add_sub  (83)
+
+	SHIFT_LEFT  shift 114
+	SHIFT_RIGHT  shift 115
+	ASSIGN  reduce 79
+	LOGIC_OR  reduce 79
+	LOGIC_AND  reduce 79
+	BITWISE_OR  reduce 79
+	BITWISE_XOR  reduce 79
+	EQUAL  reduce 79
+	NOT_EQUAL  reduce 79
+	LESS  reduce 79
+	LESS_EQUAL  reduce 79
+	GREATER  reduce 79
+	GREATER_EQUAL  reduce 79
+	R_SQUARE  reduce 79
+	R_PAREN  reduce 79
+	AND_SYMBOL  reduce 79
+	COMMA  reduce 79
+	COLON  reduce 79
+	SEMI_COLON  reduce 79
+	R_BRACKET  reduce 79
+
+
+state 146
+	expr_compare : expr_compare GREATER_EQUAL expr_shift .  (80)
+	expr_shift : expr_shift . SHIFT_LEFT expr_add_sub  (82)
+	expr_shift : expr_shift . SHIFT_RIGHT expr_add_sub  (83)
+
+	SHIFT_LEFT  shift 114
+	SHIFT_RIGHT  shift 115
+	ASSIGN  reduce 80
+	LOGIC_OR  reduce 80
+	LOGIC_AND  reduce 80
+	BITWISE_OR  reduce 80
+	BITWISE_XOR  reduce 80
+	EQUAL  reduce 80
+	NOT_EQUAL  reduce 80
+	LESS  reduce 80
+	LESS_EQUAL  reduce 80
+	GREATER  reduce 80
+	GREATER_EQUAL  reduce 80
+	R_SQUARE  reduce 80
+	R_PAREN  reduce 80
+	AND_SYMBOL  reduce 80
+	COMMA  reduce 80
+	COLON  reduce 80
+	SEMI_COLON  reduce 80
+	R_BRACKET  reduce 80
+
+
+state 147
+	expr_shift : expr_shift SHIFT_LEFT expr_add_sub .  (82)
+	expr_add_sub : expr_add_sub . PLUS_SYMBOL expr_mul_div_mod  (85)
+	expr_add_sub : expr_add_sub . MINUS_SYMBOL expr_mul_div_mod  (86)
+
+	PLUS_SYMBOL  shift 116
+	MINUS_SYMBOL  shift 117
+	ASSIGN  reduce 82
+	LOGIC_OR  reduce 82
+	LOGIC_AND  reduce 82
+	BITWISE_OR  reduce 82
+	BITWISE_XOR  reduce 82
+	EQUAL  reduce 82
+	NOT_EQUAL  reduce 82
+	LESS  reduce 82
+	LESS_EQUAL  reduce 82
+	GREATER  reduce 82
+	GREATER_EQUAL  reduce 82
+	SHIFT_LEFT  reduce 82
+	SHIFT_RIGHT  reduce 82
+	R_SQUARE  reduce 82
+	R_PAREN  reduce 82
+	AND_SYMBOL  reduce 82
+	COMMA  reduce 82
+	COLON  reduce 82
+	SEMI_COLON  reduce 82
+	R_BRACKET  reduce 82
+
+
+state 148
+	expr_shift : expr_shift SHIFT_RIGHT expr_add_sub .  (83)
+	expr_add_sub : expr_add_sub . PLUS_SYMBOL expr_mul_div_mod  (85)
+	expr_add_sub : expr_add_sub . MINUS_SYMBOL expr_mul_div_mod  (86)
+
+	PLUS_SYMBOL  shift 116
+	MINUS_SYMBOL  shift 117
+	ASSIGN  reduce 83
+	LOGIC_OR  reduce 83
+	LOGIC_AND  reduce 83
+	BITWISE_OR  reduce 83
+	BITWISE_XOR  reduce 83
+	EQUAL  reduce 83
+	NOT_EQUAL  reduce 83
+	LESS  reduce 83
+	LESS_EQUAL  reduce 83
+	GREATER  reduce 83
+	GREATER_EQUAL  reduce 83
+	SHIFT_LEFT  reduce 83
+	SHIFT_RIGHT  reduce 83
+	R_SQUARE  reduce 83
+	R_PAREN  reduce 83
+	AND_SYMBOL  reduce 83
+	COMMA  reduce 83
+	COLON  reduce 83
+	SEMI_COLON  reduce 83
+	R_BRACKET  reduce 83
+
+
+state 149
+	expr_add_sub : expr_add_sub PLUS_SYMBOL expr_mul_div_mod .  (85)
+	expr_mul_div_mod : expr_mul_div_mod . STAR_SYMBOL expr_second  (88)
+	expr_mul_div_mod : expr_mul_div_mod . DIV expr_second  (89)
+	expr_mul_div_mod : expr_mul_div_mod . MOD expr_second  (90)
+
+	DIV  shift 118
+	MOD  shift 119
+	STAR_SYMBOL  shift 120
+	ASSIGN  reduce 85
+	LOGIC_OR  reduce 85
+	LOGIC_AND  reduce 85
+	BITWISE_OR  reduce 85
+	BITWISE_XOR  reduce 85
+	EQUAL  reduce 85
+	NOT_EQUAL  reduce 85
+	LESS  reduce 85
+	LESS_EQUAL  reduce 85
+	GREATER  reduce 85
+	GREATER_EQUAL  reduce 85
+	SHIFT_LEFT  reduce 85
+	SHIFT_RIGHT  reduce 85
+	R_SQUARE  reduce 85
+	R_PAREN  reduce 85
+	AND_SYMBOL  reduce 85
+	PLUS_SYMBOL  reduce 85
+	MINUS_SYMBOL  reduce 85
+	COMMA  reduce 85
+	COLON  reduce 85
+	SEMI_COLON  reduce 85
+	R_BRACKET  reduce 85
+
+
+state 150
+	expr_add_sub : expr_add_sub MINUS_SYMBOL expr_mul_div_mod .  (86)
+	expr_mul_div_mod : expr_mul_div_mod . STAR_SYMBOL expr_second  (88)
+	expr_mul_div_mod : expr_mul_div_mod . DIV expr_second  (89)
+	expr_mul_div_mod : expr_mul_div_mod . MOD expr_second  (90)
+
+	DIV  shift 118
+	MOD  shift 119
+	STAR_SYMBOL  shift 120
+	ASSIGN  reduce 86
+	LOGIC_OR  reduce 86
+	LOGIC_AND  reduce 86
+	BITWISE_OR  reduce 86
+	BITWISE_XOR  reduce 86
+	EQUAL  reduce 86
+	NOT_EQUAL  reduce 86
+	LESS  reduce 86
+	LESS_EQUAL  reduce 86
+	GREATER  reduce 86
+	GREATER_EQUAL  reduce 86
+	SHIFT_LEFT  reduce 86
+	SHIFT_RIGHT  reduce 86
+	R_SQUARE  reduce 86
+	R_PAREN  reduce 86
+	AND_SYMBOL  reduce 86
+	PLUS_SYMBOL  reduce 86
+	MINUS_SYMBOL  reduce 86
+	COMMA  reduce 86
+	COLON  reduce 86
+	SEMI_COLON  reduce 86
+	R_BRACKET  reduce 86
+
+
+state 151
+	expr_mul_div_mod : expr_mul_div_mod DIV expr_second .  (89)
+
+	.  reduce 89
+
+
+state 152
+	expr_mul_div_mod : expr_mul_div_mod MOD expr_second .  (90)
+
+	.  reduce 90
+
+
+state 153
+	expr_mul_div_mod : expr_mul_div_mod STAR_SYMBOL expr_second .  (88)
+
+	.  reduce 88
+
+
+state 154
+	function_call_argus : function_call_argus . COMMA expr  (58)
+	expr_first : expr_first L_PAREN function_call_argus . R_PAREN  (104)
+
+	R_PAREN  shift 167
+	COMMA  shift 168
+	.  error
+
+
+state 155
+	function_call_argus : expr .  (59)
+
+	.  reduce 59
+
+
+state 156
+	array_dimensions : L_SQUARE expr R_SQUARE array_dimensions .  (45)
+
+	.  reduce 45
+
+
+state 157
+	function_declaration : type IDENT L_PAREN function_parameters R_PAREN SEMI_COLON .  (51)
+
+	.  reduce 51
+
+
+state 158
+	statement_compound : L_BRACKET . dec_or_state_multiple R_BRACKET  (115)
+	statement_compound : L_BRACKET . R_BRACKET  (116)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	TYPE_INT  shift 1
+	TYPE_CHAR  shift 2
+	TYPE_FLOAT  shift 3
+	TYPE_DOUBLE  shift 4
+	CONST  shift 5
+	SIGNED  shift 6
+	UNSIGNED  shift 7
+	LONG_LONG  shift 8
+	LONG  shift 9
+	SHORT  shift 10
+	VOID  shift 11
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	L_BRACKET  shift 158
+	R_BRACKET  shift 169
+	IF  shift 170
+	SWITCH  shift 171
+	WHILE  shift 172
+	DO  shift 173
+	FOR  shift 174
+	RETURN  shift 175
+	BREAK  shift 176
+	CONTINUE  shift 177
+	SEMI_COLON  reduce 61
+
+	dec_or_state_multiple  goto 178
+	declaration_or_statement  goto 179
+	declaration_option  goto 180
+	statement_option  goto 181
+	type  goto 182
+	literal  goto 65
+	first_opt  goto 18
+	second_opt  goto 19
+	third_opt  goto 20
+	scalar_declaration  goto 21
+	array_declaration  goto 22
+	function_declaration  goto 23
+	expr  goto 183
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+	statement_compound  goto 184
+	statement_expr  goto 185
+	statement_if  goto 186
+	statement_switch  goto 187
+	statement_while  goto 188
+	statement_for  goto 189
+	statement_return  goto 190
+	statement_break  goto 191
+	statement_continue  goto 192
+
+
+state 159
+	function_definition : type IDENT L_PAREN function_parameters R_PAREN statement_compound .  (53)
+
+	.  reduce 53
+
+
+state 160
+	function_parameters : function_parameters COMMA type . ident_single  (55)
+
+	IDENT  shift 86
+	STAR_SYMBOL  shift 87
+	.  error
+
+	ident_single  goto 193
+
+
+state 161
+	array_content : L_BRACKET . array_content R_BRACKET  (47)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	L_BRACKET  shift 161
+	COMMA  reduce 61
+	R_BRACKET  reduce 61
+
+	literal  goto 65
+	array_content  goto 194
+	expr  goto 163
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 162
+	array_single : IDENT array_dimensions ASSIGN L_BRACKET array_content . R_BRACKET  (44)
+	array_content : array_content . COMMA L_BRACKET array_content R_BRACKET  (48)
+	array_content : array_content . COMMA expr  (49)
+
+	COMMA  shift 195
+	R_BRACKET  shift 196
+	.  error
+
+
+state 163
+	array_content : expr .  (50)
+
+	.  reduce 50
+
+
+state 164
+	function_declaration : type STAR_SYMBOL IDENT L_PAREN function_parameters R_PAREN . SEMI_COLON  (52)
+	function_definition : type STAR_SYMBOL IDENT L_PAREN function_parameters R_PAREN . statement_compound  (54)
+
+	SEMI_COLON  shift 197
+	L_BRACKET  shift 158
+	.  error
+
+	statement_compound  goto 198
+
+
+state 165
+	expr_second : L_PAREN type R_PAREN expr_second .  (94)
+
+	.  reduce 94
+
+
+state 166
+	expr_second : L_PAREN type STAR_SYMBOL R_PAREN . expr_second  (95)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	.  error
+
+	literal  goto 65
+	expr_second  goto 199
+	expr_first  goto 79
+
+
+state 167
+	expr_first : expr_first L_PAREN function_call_argus R_PAREN .  (104)
+
+	.  reduce 104
+
+
+state 168
+	function_call_argus : function_call_argus COMMA . expr  (58)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	R_PAREN  reduce 61
+	COMMA  reduce 61
+
+	literal  goto 65
+	expr  goto 200
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 169
+	statement_compound : L_BRACKET R_BRACKET .  (116)
+
+	.  reduce 116
+
+
+state 170
+	statement_if : IF . L_PAREN expr R_PAREN statement_compound  (131)
+	statement_if : IF . L_PAREN expr R_PAREN statement_compound ELSE statement_compound  (132)
+
+	L_PAREN  shift 201
+	.  error
+
+
+state 171
+	statement_switch : SWITCH . L_PAREN expr R_PAREN L_BRACKET statement_clause_multiple R_BRACKET  (133)
+	statement_switch : SWITCH . L_PAREN expr R_PAREN L_BRACKET R_BRACKET  (134)
+
+	L_PAREN  shift 202
+	.  error
+
+
+state 172
+	statement_while : WHILE . L_PAREN expr R_PAREN statement_option  (145)
+
+	L_PAREN  shift 203
+	.  error
+
+
+state 173
+	statement_while : DO . statement_option WHILE L_PAREN expr R_PAREN SEMI_COLON  (146)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	L_BRACKET  shift 158
+	IF  shift 170
+	SWITCH  shift 171
+	WHILE  shift 172
+	DO  shift 173
+	FOR  shift 174
+	RETURN  shift 175
+	BREAK  shift 176
+	CONTINUE  shift 177
+	SEMI_COLON  reduce 61
+
+	statement_option  goto 204
+	literal  goto 65
+	expr  goto 183
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+	statement_compound  goto 184
+	statement_expr  goto 185
+	statement_if  goto 186
+	statement_switch  goto 187
+	statement_while  goto 188
+	statement_for  goto 189
+	statement_return  goto 190
+	statement_break  goto 191
+	statement_continue  goto 192
+
+
+state 174
+	statement_for : FOR . L_PAREN expr SEMI_COLON expr SEMI_COLON expr R_PAREN statement_option  (147)
+
+	L_PAREN  shift 205
+	.  error
+
+
+state 175
+	statement_return : RETURN . expr SEMI_COLON  (148)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	SEMI_COLON  reduce 61
+
+	literal  goto 65
+	expr  goto 206
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 176
+	statement_break : BREAK . SEMI_COLON  (149)
+
+	SEMI_COLON  shift 207
+	.  error
+
+
+state 177
+	statement_continue : CONTINUE . SEMI_COLON  (150)
+
+	SEMI_COLON  shift 208
+	.  error
+
+
+state 178
+	statement_compound : L_BRACKET dec_or_state_multiple . R_BRACKET  (115)
+	dec_or_state_multiple : dec_or_state_multiple . declaration_or_statement  (117)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	TYPE_INT  shift 1
+	TYPE_CHAR  shift 2
+	TYPE_FLOAT  shift 3
+	TYPE_DOUBLE  shift 4
+	CONST  shift 5
+	SIGNED  shift 6
+	UNSIGNED  shift 7
+	LONG_LONG  shift 8
+	LONG  shift 9
+	SHORT  shift 10
+	VOID  shift 11
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	L_BRACKET  shift 158
+	R_BRACKET  shift 209
+	IF  shift 170
+	SWITCH  shift 171
+	WHILE  shift 172
+	DO  shift 173
+	FOR  shift 174
+	RETURN  shift 175
+	BREAK  shift 176
+	CONTINUE  shift 177
+	SEMI_COLON  reduce 61
+
+	declaration_or_statement  goto 210
+	declaration_option  goto 180
+	statement_option  goto 181
+	type  goto 182
+	literal  goto 65
+	first_opt  goto 18
+	second_opt  goto 19
+	third_opt  goto 20
+	scalar_declaration  goto 21
+	array_declaration  goto 22
+	function_declaration  goto 23
+	expr  goto 183
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+	statement_compound  goto 184
+	statement_expr  goto 185
+	statement_if  goto 186
+	statement_switch  goto 187
+	statement_while  goto 188
+	statement_for  goto 189
+	statement_return  goto 190
+	statement_break  goto 191
+	statement_continue  goto 192
+
+
+state 179
+	dec_or_state_multiple : declaration_or_statement .  (118)
+
+	.  reduce 118
+
+
+state 180
+	declaration_or_statement : declaration_option .  (119)
+
+	.  reduce 119
+
+
+state 181
+	declaration_or_statement : statement_option .  (120)
+
+	.  reduce 120
+
+
+state 182
+	scalar_declaration : type . idents SEMI_COLON  (10)
+	array_declaration : type . array_multiple SEMI_COLON  (40)
+	function_declaration : type . IDENT L_PAREN function_parameters R_PAREN SEMI_COLON  (51)
+	function_declaration : type . STAR_SYMBOL IDENT L_PAREN function_parameters R_PAREN SEMI_COLON  (52)
+
+	IDENT  shift 211
+	STAR_SYMBOL  shift 212
+	.  error
+
+	idents  goto 37
+	ident_single  goto 38
+	array_multiple  goto 39
+	array_single  goto 40
+
+
+state 183
+	statement_expr : expr . SEMI_COLON  (130)
+
+	SEMI_COLON  shift 213
+	.  error
+
+
+state 184
+	statement_option : statement_compound .  (129)
+
+	.  reduce 129
+
+
+state 185
+	statement_option : statement_expr .  (121)
+
+	.  reduce 121
+
+
+state 186
+	statement_option : statement_if .  (122)
+
+	.  reduce 122
+
+
+state 187
+	statement_option : statement_switch .  (123)
+
+	.  reduce 123
+
+
+state 188
+	statement_option : statement_while .  (124)
+
+	.  reduce 124
+
+
+state 189
+	statement_option : statement_for .  (125)
+
+	.  reduce 125
+
+
+state 190
+	statement_option : statement_return .  (127)
+
+	.  reduce 127
+
+
+state 191
+	statement_option : statement_break .  (126)
+
+	.  reduce 126
+
+
+state 192
+	statement_option : statement_continue .  (128)
+
+	.  reduce 128
+
+
+state 193
+	function_parameters : function_parameters COMMA type ident_single .  (55)
+
+	.  reduce 55
+
+
+state 194
+	array_content : L_BRACKET array_content . R_BRACKET  (47)
+	array_content : array_content . COMMA L_BRACKET array_content R_BRACKET  (48)
+	array_content : array_content . COMMA expr  (49)
+
+	COMMA  shift 195
+	R_BRACKET  shift 214
+	.  error
+
+
+state 195
+	array_content : array_content COMMA . L_BRACKET array_content R_BRACKET  (48)
+	array_content : array_content COMMA . expr  (49)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	L_BRACKET  shift 215
+	COMMA  reduce 61
+	R_BRACKET  reduce 61
+
+	literal  goto 65
+	expr  goto 216
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 196
+	array_single : IDENT array_dimensions ASSIGN L_BRACKET array_content R_BRACKET .  (44)
+
+	.  reduce 44
+
+
+state 197
+	function_declaration : type STAR_SYMBOL IDENT L_PAREN function_parameters R_PAREN SEMI_COLON .  (52)
+
+	.  reduce 52
+
+
+state 198
+	function_definition : type STAR_SYMBOL IDENT L_PAREN function_parameters R_PAREN statement_compound .  (54)
+
+	.  reduce 54
+
+
+state 199
+	expr_second : L_PAREN type STAR_SYMBOL R_PAREN expr_second .  (95)
+
+	.  reduce 95
+
+
+state 200
+	function_call_argus : function_call_argus COMMA expr .  (58)
+
+	.  reduce 58
+
+
+state 201
+	statement_if : IF L_PAREN . expr R_PAREN statement_compound  (131)
+	statement_if : IF L_PAREN . expr R_PAREN statement_compound ELSE statement_compound  (132)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	R_PAREN  reduce 61
+
+	literal  goto 65
+	expr  goto 217
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 202
+	statement_switch : SWITCH L_PAREN . expr R_PAREN L_BRACKET statement_clause_multiple R_BRACKET  (133)
+	statement_switch : SWITCH L_PAREN . expr R_PAREN L_BRACKET R_BRACKET  (134)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	R_PAREN  reduce 61
+
+	literal  goto 65
+	expr  goto 218
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 203
+	statement_while : WHILE L_PAREN . expr R_PAREN statement_option  (145)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	R_PAREN  reduce 61
+
+	literal  goto 65
+	expr  goto 219
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 204
+	statement_while : DO statement_option . WHILE L_PAREN expr R_PAREN SEMI_COLON  (146)
+
+	WHILE  shift 220
+	.  error
+
+
+state 205
+	statement_for : FOR L_PAREN . expr SEMI_COLON expr SEMI_COLON expr R_PAREN statement_option  (147)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	SEMI_COLON  reduce 61
+
+	literal  goto 65
+	expr  goto 221
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 206
+	statement_return : RETURN expr . SEMI_COLON  (148)
+
+	SEMI_COLON  shift 222
+	.  error
+
+
+state 207
+	statement_break : BREAK SEMI_COLON .  (149)
+
+	.  reduce 149
+
+
+state 208
+	statement_continue : CONTINUE SEMI_COLON .  (150)
+
+	.  reduce 150
+
+
+state 209
+	statement_compound : L_BRACKET dec_or_state_multiple R_BRACKET .  (115)
+
+	.  reduce 115
+
+
+state 210
+	dec_or_state_multiple : dec_or_state_multiple declaration_or_statement .  (117)
+
+	.  reduce 117
+
+
+state 211
+	ident_single : IDENT .  (36)
+	ident_single : IDENT . ASSIGN expr  (37)
+	array_single : IDENT . array_dimensions  (43)
+	array_single : IDENT . array_dimensions ASSIGN L_BRACKET array_content R_BRACKET  (44)
+	function_declaration : type IDENT . L_PAREN function_parameters R_PAREN SEMI_COLON  (51)
+
+	ASSIGN  shift 41
+	L_SQUARE  shift 42
+	L_PAREN  shift 223
+	COMMA  reduce 36
+	SEMI_COLON  reduce 36
+
+	array_dimensions  goto 44
+
+
+state 212
+	ident_single : STAR_SYMBOL . IDENT  (38)
+	ident_single : STAR_SYMBOL . IDENT ASSIGN expr  (39)
+	function_declaration : type STAR_SYMBOL . IDENT L_PAREN function_parameters R_PAREN SEMI_COLON  (52)
+
+	IDENT  shift 224
+	.  error
+
+
+state 213
+	statement_expr : expr SEMI_COLON .  (130)
+
+	.  reduce 130
+
+
+state 214
+	array_content : L_BRACKET array_content R_BRACKET .  (47)
+
+	.  reduce 47
+
+
+state 215
+	array_content : array_content COMMA L_BRACKET . array_content R_BRACKET  (48)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	L_BRACKET  shift 161
+	COMMA  reduce 61
+	R_BRACKET  reduce 61
+
+	literal  goto 65
+	array_content  goto 225
+	expr  goto 163
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 216
+	array_content : array_content COMMA expr .  (49)
+
+	.  reduce 49
+
+
+state 217
+	statement_if : IF L_PAREN expr . R_PAREN statement_compound  (131)
+	statement_if : IF L_PAREN expr . R_PAREN statement_compound ELSE statement_compound  (132)
+
+	R_PAREN  shift 226
+	.  error
+
+
+state 218
+	statement_switch : SWITCH L_PAREN expr . R_PAREN L_BRACKET statement_clause_multiple R_BRACKET  (133)
+	statement_switch : SWITCH L_PAREN expr . R_PAREN L_BRACKET R_BRACKET  (134)
+
+	R_PAREN  shift 227
+	.  error
+
+
+state 219
+	statement_while : WHILE L_PAREN expr . R_PAREN statement_option  (145)
+
+	R_PAREN  shift 228
+	.  error
+
+
+state 220
+	statement_while : DO statement_option WHILE . L_PAREN expr R_PAREN SEMI_COLON  (146)
+
+	L_PAREN  shift 229
+	.  error
+
+
+state 221
+	statement_for : FOR L_PAREN expr . SEMI_COLON expr SEMI_COLON expr R_PAREN statement_option  (147)
+
+	SEMI_COLON  shift 230
+	.  error
+
+
+state 222
+	statement_return : RETURN expr SEMI_COLON .  (148)
+
+	.  reduce 148
+
+
+state 223
+	function_declaration : type IDENT L_PAREN . function_parameters R_PAREN SEMI_COLON  (51)
+	function_parameters : .  (57)
+
+	TYPE_INT  shift 1
+	TYPE_CHAR  shift 2
+	TYPE_FLOAT  shift 3
+	TYPE_DOUBLE  shift 4
+	CONST  shift 5
+	SIGNED  shift 6
+	UNSIGNED  shift 7
+	LONG_LONG  shift 8
+	LONG  shift 9
+	SHORT  shift 10
+	VOID  shift 11
+	R_PAREN  reduce 57
+	COMMA  reduce 57
+
+	type  goto 81
+	first_opt  goto 18
+	second_opt  goto 19
+	third_opt  goto 20
+	function_parameters  goto 231
+
+
+state 224
+	ident_single : STAR_SYMBOL IDENT .  (38)
+	ident_single : STAR_SYMBOL IDENT . ASSIGN expr  (39)
+	function_declaration : type STAR_SYMBOL IDENT . L_PAREN function_parameters R_PAREN SEMI_COLON  (52)
+
+	ASSIGN  shift 84
+	L_PAREN  shift 232
+	COMMA  reduce 38
+	SEMI_COLON  reduce 38
+
+
+state 225
+	array_content : array_content . COMMA L_BRACKET array_content R_BRACKET  (48)
+	array_content : array_content COMMA L_BRACKET array_content . R_BRACKET  (48)
+	array_content : array_content . COMMA expr  (49)
+
+	COMMA  shift 195
+	R_BRACKET  shift 233
+	.  error
+
+
+state 226
+	statement_if : IF L_PAREN expr R_PAREN . statement_compound  (131)
+	statement_if : IF L_PAREN expr R_PAREN . statement_compound ELSE statement_compound  (132)
+
+	L_BRACKET  shift 158
+	.  error
+
+	statement_compound  goto 234
+
+
+state 227
+	statement_switch : SWITCH L_PAREN expr R_PAREN . L_BRACKET statement_clause_multiple R_BRACKET  (133)
+	statement_switch : SWITCH L_PAREN expr R_PAREN . L_BRACKET R_BRACKET  (134)
+
+	L_BRACKET  shift 235
+	.  error
+
+
+state 228
+	statement_while : WHILE L_PAREN expr R_PAREN . statement_option  (145)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	L_BRACKET  shift 158
+	IF  shift 170
+	SWITCH  shift 171
+	WHILE  shift 172
+	DO  shift 173
+	FOR  shift 174
+	RETURN  shift 175
+	BREAK  shift 176
+	CONTINUE  shift 177
+	SEMI_COLON  reduce 61
+
+	statement_option  goto 236
+	literal  goto 65
+	expr  goto 183
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+	statement_compound  goto 184
+	statement_expr  goto 185
+	statement_if  goto 186
+	statement_switch  goto 187
+	statement_while  goto 188
+	statement_for  goto 189
+	statement_return  goto 190
+	statement_break  goto 191
+	statement_continue  goto 192
+
+
+state 229
+	statement_while : DO statement_option WHILE L_PAREN . expr R_PAREN SEMI_COLON  (146)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	R_PAREN  reduce 61
+
+	literal  goto 65
+	expr  goto 237
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 230
+	statement_for : FOR L_PAREN expr SEMI_COLON . expr SEMI_COLON expr R_PAREN statement_option  (147)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	SEMI_COLON  reduce 61
+
+	literal  goto 65
+	expr  goto 238
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 231
+	function_declaration : type IDENT L_PAREN function_parameters . R_PAREN SEMI_COLON  (51)
+	function_parameters : function_parameters . COMMA type ident_single  (55)
+
+	R_PAREN  shift 239
+	COMMA  shift 127
+	.  error
+
+
+state 232
+	function_declaration : type STAR_SYMBOL IDENT L_PAREN . function_parameters R_PAREN SEMI_COLON  (52)
+	function_parameters : .  (57)
+
+	TYPE_INT  shift 1
+	TYPE_CHAR  shift 2
+	TYPE_FLOAT  shift 3
+	TYPE_DOUBLE  shift 4
+	CONST  shift 5
+	SIGNED  shift 6
+	UNSIGNED  shift 7
+	LONG_LONG  shift 8
+	LONG  shift 9
+	SHORT  shift 10
+	VOID  shift 11
+	R_PAREN  reduce 57
+	COMMA  reduce 57
+
+	type  goto 81
+	first_opt  goto 18
+	second_opt  goto 19
+	third_opt  goto 20
+	function_parameters  goto 240
+
+
+state 233
+	array_content : array_content COMMA L_BRACKET array_content R_BRACKET .  (48)
+
+	.  reduce 48
+
+
+state 234
+	statement_if : IF L_PAREN expr R_PAREN statement_compound .  (131)
+	statement_if : IF L_PAREN expr R_PAREN statement_compound . ELSE statement_compound  (132)
+
+	ELSE  shift 241
+	IDENT  reduce 131
+	STRING  reduce 131
+	CHAR  reduce 131
+	NULL_VAL  reduce 131
+	INT  reduce 131
+	FLOAT  reduce 131
+	TYPE_INT  reduce 131
+	TYPE_CHAR  reduce 131
+	TYPE_FLOAT  reduce 131
+	TYPE_DOUBLE  reduce 131
+	CONST  reduce 131
+	SIGNED  reduce 131
+	UNSIGNED  reduce 131
+	LONG_LONG  reduce 131
+	LONG  reduce 131
+	SHORT  reduce 131
+	VOID  reduce 131
+	LOGIC_NOT  reduce 131
+	BITWISE_NOT  reduce 131
+	L_PAREN  reduce 131
+	AND_SYMBOL  reduce 131
+	STAR_SYMBOL  reduce 131
+	PLUS_SYMBOL  reduce 131
+	MINUS_SYMBOL  reduce 131
+	INCREMENT  reduce 131
+	DECREMENT  reduce 131
+	SEMI_COLON  reduce 131
+	L_BRACKET  reduce 131
+	R_BRACKET  reduce 131
+	IF  reduce 131
+	SWITCH  reduce 131
+	CASE  reduce 131
+	DEFAULT  reduce 131
+	WHILE  reduce 131
+	DO  reduce 131
+	FOR  reduce 131
+	RETURN  reduce 131
+	BREAK  reduce 131
+	CONTINUE  reduce 131
+
+
+state 235
+	statement_switch : SWITCH L_PAREN expr R_PAREN L_BRACKET . statement_clause_multiple R_BRACKET  (133)
+	statement_switch : SWITCH L_PAREN expr R_PAREN L_BRACKET . R_BRACKET  (134)
+
+	R_BRACKET  shift 242
+	CASE  shift 243
+	DEFAULT  shift 244
+	.  error
+
+	statement_clause_multiple  goto 245
+	statement_clause  goto 246
+	statement_case  goto 247
+	statement_default  goto 248
+
+
+state 236
+	statement_while : WHILE L_PAREN expr R_PAREN statement_option .  (145)
+
+	.  reduce 145
+
+
+state 237
+	statement_while : DO statement_option WHILE L_PAREN expr . R_PAREN SEMI_COLON  (146)
+
+	R_PAREN  shift 249
+	.  error
+
+
+state 238
+	statement_for : FOR L_PAREN expr SEMI_COLON expr . SEMI_COLON expr R_PAREN statement_option  (147)
+
+	SEMI_COLON  shift 250
+	.  error
+
+
+state 239
+	function_declaration : type IDENT L_PAREN function_parameters R_PAREN . SEMI_COLON  (51)
+
+	SEMI_COLON  shift 157
+	.  error
+
+
+state 240
+	function_declaration : type STAR_SYMBOL IDENT L_PAREN function_parameters . R_PAREN SEMI_COLON  (52)
+	function_parameters : function_parameters . COMMA type ident_single  (55)
+
+	R_PAREN  shift 251
+	COMMA  shift 127
+	.  error
+
+
+state 241
+	statement_if : IF L_PAREN expr R_PAREN statement_compound ELSE . statement_compound  (132)
+
+	L_BRACKET  shift 158
+	.  error
+
+	statement_compound  goto 252
+
+
+state 242
+	statement_switch : SWITCH L_PAREN expr R_PAREN L_BRACKET R_BRACKET .  (134)
+
+	.  reduce 134
+
+
+state 243
+	statement_case : CASE . expr COLON statement_multiple  (139)
+	statement_case : CASE . expr COLON  (140)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	COLON  reduce 61
+
+	literal  goto 65
+	expr  goto 253
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 244
+	statement_default : DEFAULT . COLON statement_multiple  (141)
+	statement_default : DEFAULT . COLON  (142)
+
+	COLON  shift 254
+	.  error
+
+
+state 245
+	statement_switch : SWITCH L_PAREN expr R_PAREN L_BRACKET statement_clause_multiple . R_BRACKET  (133)
+	statement_clause_multiple : statement_clause_multiple . statement_clause  (135)
+
+	R_BRACKET  shift 255
+	CASE  shift 243
+	DEFAULT  shift 244
+	.  error
+
+	statement_clause  goto 256
+	statement_case  goto 247
+	statement_default  goto 248
+
+
+state 246
+	statement_clause_multiple : statement_clause .  (136)
+
+	.  reduce 136
+
+
+state 247
+	statement_clause : statement_case .  (137)
+
+	.  reduce 137
+
+
+state 248
+	statement_clause : statement_default .  (138)
+
+	.  reduce 138
+
+
+state 249
+	statement_while : DO statement_option WHILE L_PAREN expr R_PAREN . SEMI_COLON  (146)
+
+	SEMI_COLON  shift 257
+	.  error
+
+
+state 250
+	statement_for : FOR L_PAREN expr SEMI_COLON expr SEMI_COLON . expr R_PAREN statement_option  (147)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	R_PAREN  reduce 61
+
+	literal  goto 65
+	expr  goto 258
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+
+
+state 251
+	function_declaration : type STAR_SYMBOL IDENT L_PAREN function_parameters R_PAREN . SEMI_COLON  (52)
+
+	SEMI_COLON  shift 197
+	.  error
+
+
+state 252
+	statement_if : IF L_PAREN expr R_PAREN statement_compound ELSE statement_compound .  (132)
+
+	.  reduce 132
+
+
+state 253
+	statement_case : CASE expr . COLON statement_multiple  (139)
+	statement_case : CASE expr . COLON  (140)
+
+	COLON  shift 259
+	.  error
+
+
+state 254
+	statement_default : DEFAULT COLON . statement_multiple  (141)
+	statement_default : DEFAULT COLON .  (142)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	L_BRACKET  shift 158
+	IF  shift 170
+	SWITCH  shift 171
+	WHILE  shift 172
+	DO  shift 173
+	FOR  shift 174
+	RETURN  shift 175
+	BREAK  shift 176
+	CONTINUE  shift 177
+	SEMI_COLON  reduce 61
+	R_BRACKET  reduce 142
+	CASE  reduce 142
+	DEFAULT  reduce 142
+
+	statement_option  goto 260
+	literal  goto 65
+	expr  goto 183
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+	statement_compound  goto 184
+	statement_multiple  goto 261
+	statement_expr  goto 185
+	statement_if  goto 186
+	statement_switch  goto 187
+	statement_while  goto 188
+	statement_for  goto 189
+	statement_return  goto 190
+	statement_break  goto 191
+	statement_continue  goto 192
+
+
+state 255
+	statement_switch : SWITCH L_PAREN expr R_PAREN L_BRACKET statement_clause_multiple R_BRACKET .  (133)
+
+	.  reduce 133
+
+
+state 256
+	statement_clause_multiple : statement_clause_multiple statement_clause .  (135)
+
+	.  reduce 135
+
+
+state 257
+	statement_while : DO statement_option WHILE L_PAREN expr R_PAREN SEMI_COLON .  (146)
+
+	.  reduce 146
+
+
+state 258
+	statement_for : FOR L_PAREN expr SEMI_COLON expr SEMI_COLON expr . R_PAREN statement_option  (147)
+
+	R_PAREN  shift 262
+	.  error
+
+
+state 259
+	statement_case : CASE expr COLON . statement_multiple  (139)
+	statement_case : CASE expr COLON .  (140)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	L_BRACKET  shift 158
+	IF  shift 170
+	SWITCH  shift 171
+	WHILE  shift 172
+	DO  shift 173
+	FOR  shift 174
+	RETURN  shift 175
+	BREAK  shift 176
+	CONTINUE  shift 177
+	SEMI_COLON  reduce 61
+	R_BRACKET  reduce 140
+	CASE  reduce 140
+	DEFAULT  reduce 140
+
+	statement_option  goto 260
+	literal  goto 65
+	expr  goto 183
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+	statement_compound  goto 184
+	statement_multiple  goto 263
+	statement_expr  goto 185
+	statement_if  goto 186
+	statement_switch  goto 187
+	statement_while  goto 188
+	statement_for  goto 189
+	statement_return  goto 190
+	statement_break  goto 191
+	statement_continue  goto 192
+
+
+state 260
+	statement_multiple : statement_option .  (144)
+
+	.  reduce 144
+
+
+state 261
+	statement_default : DEFAULT COLON statement_multiple .  (141)
+	statement_multiple : statement_multiple . statement_option  (143)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	L_BRACKET  shift 158
+	IF  shift 170
+	SWITCH  shift 171
+	WHILE  shift 172
+	DO  shift 173
+	FOR  shift 174
+	RETURN  shift 175
+	BREAK  shift 176
+	CONTINUE  shift 177
+	SEMI_COLON  reduce 61
+	R_BRACKET  reduce 141
+	CASE  reduce 141
+	DEFAULT  reduce 141
+
+	statement_option  goto 264
+	literal  goto 65
+	expr  goto 183
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+	statement_compound  goto 184
+	statement_expr  goto 185
+	statement_if  goto 186
+	statement_switch  goto 187
+	statement_while  goto 188
+	statement_for  goto 189
+	statement_return  goto 190
+	statement_break  goto 191
+	statement_continue  goto 192
+
+
+state 262
+	statement_for : FOR L_PAREN expr SEMI_COLON expr SEMI_COLON expr R_PAREN . statement_option  (147)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	L_BRACKET  shift 158
+	IF  shift 170
+	SWITCH  shift 171
+	WHILE  shift 172
+	DO  shift 173
+	FOR  shift 174
+	RETURN  shift 175
+	BREAK  shift 176
+	CONTINUE  shift 177
+	SEMI_COLON  reduce 61
+
+	statement_option  goto 265
+	literal  goto 65
+	expr  goto 183
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+	statement_compound  goto 184
+	statement_expr  goto 185
+	statement_if  goto 186
+	statement_switch  goto 187
+	statement_while  goto 188
+	statement_for  goto 189
+	statement_return  goto 190
+	statement_break  goto 191
+	statement_continue  goto 192
+
+
+state 263
+	statement_case : CASE expr COLON statement_multiple .  (139)
+	statement_multiple : statement_multiple . statement_option  (143)
+	expr : .  (61)
+
+	IDENT  shift 50
+	STRING  shift 51
+	CHAR  shift 52
+	NULL_VAL  shift 53
+	INT  shift 54
+	FLOAT  shift 55
+	LOGIC_NOT  shift 56
+	BITWISE_NOT  shift 57
+	L_PAREN  shift 58
+	AND_SYMBOL  shift 59
+	STAR_SYMBOL  shift 60
+	PLUS_SYMBOL  shift 61
+	MINUS_SYMBOL  shift 62
+	INCREMENT  shift 63
+	DECREMENT  shift 64
+	L_BRACKET  shift 158
+	IF  shift 170
+	SWITCH  shift 171
+	WHILE  shift 172
+	DO  shift 173
+	FOR  shift 174
+	RETURN  shift 175
+	BREAK  shift 176
+	CONTINUE  shift 177
+	SEMI_COLON  reduce 61
+	R_BRACKET  reduce 139
+	CASE  reduce 139
+	DEFAULT  reduce 139
+
+	statement_option  goto 264
+	literal  goto 65
+	expr  goto 183
+	expr_assign  goto 67
+	expr_logicOR  goto 68
+	expr_logicAND  goto 69
+	expr_bitwiseOR  goto 70
+	expr_bitwiseXOR  goto 71
+	expr_bitwiseAND  goto 72
+	expr_isequal  goto 73
+	expr_compare  goto 74
+	expr_shift  goto 75
+	expr_add_sub  goto 76
+	expr_mul_div_mod  goto 77
+	expr_second  goto 78
+	expr_first  goto 79
+	statement_compound  goto 184
+	statement_expr  goto 185
+	statement_if  goto 186
+	statement_switch  goto 187
+	statement_while  goto 188
+	statement_for  goto 189
+	statement_return  goto 190
+	statement_break  goto 191
+	statement_continue  goto 192
+
+
+state 264
+	statement_multiple : statement_multiple statement_option .  (143)
+
+	.  reduce 143
+
+
+state 265
+	statement_for : FOR L_PAREN expr SEMI_COLON expr SEMI_COLON expr R_PAREN statement_option .  (147)
+
+	.  reduce 147
+
+
+62 terminals, 54 nonterminals
+151 grammar rules, 266 states
+
+grammar parser grammar
+symbol# value# symbol
+     0      0  $end
+     1    256  error
+     2    257  IDENT
+     3    258  STRING
+     4    259  CHAR
+     5    260  NULL_VAL
+     6    261  INT
+     7    262  FLOAT
+     8    263  TYPE_INT
+     9    264  TYPE_CHAR
+    10    265  TYPE_FLOAT
+    11    266  TYPE_DOUBLE
+    12    267  CONST
+    13    268  SIGNED
+    14    269  UNSIGNED
+    15    270  LONG_LONG
+    16    271  LONG
+    17    272  SHORT
+    18    273  VOID
+    19    274  ASSIGN
+    20    275  LOGIC_OR
+    21    276  LOGIC_AND
+    22    277  BITWISE_OR
+    23    278  BITWISE_XOR
+    24    279  EQUAL
+    25    280  NOT_EQUAL
+    26    281  LESS
+    27    282  LESS_EQUAL
+    28    283  GREATER
+    29    284  GREATER_EQUAL
+    30    285  SHIFT_LEFT
+    31    286  SHIFT_RIGHT
+    32    287  DIV
+    33    288  MOD
+    34    289  LOGIC_NOT
+    35    290  BITWISE_NOT
+    36    291  L_SQUARE
+    37    292  R_SQUARE
+    38    293  L_PAREN
+    39    294  R_PAREN
+    40    295  AND_SYMBOL
+    41    296  STAR_SYMBOL
+    42    297  PLUS_SYMBOL
+    43    298  MINUS_SYMBOL
+    44    299  INCREMENT
+    45    300  DECREMENT
+    46    301  COMMA
+    47    302  COLON
+    48    303  SEMI_COLON
+    49    304  L_BRACKET
+    50    305  R_BRACKET
+    51    306  IF
+    52    307  ELSE
+    53    308  SWITCH
+    54    309  CASE
+    55    310  DEFAULT
+    56    311  WHILE
+    57    312  DO
+    58    313  FOR
+    59    314  RETURN
+    60    315  BREAK
+    61    316  CONTINUE
+    62    317  $accept
+    63    318  program
+    64    319  def_or_dec_multiple
+    65    320  definition_or_declaration
+    66    321  dec_or_state_multiple
+    67    322  declaration_or_statement
+    68    323  definition_option
+    69    324  declaration_option
+    70    325  statement_option
+    71    326  type
+    72    327  idents
+    73    328  ident_single
+    74    329  literal
+    75    330  first_opt
+    76    331  second_opt
+    77    332  third_opt
+    78    333  scalar_declaration
+    79    334  array_declaration
+    80    335  array_multiple
+    81    336  array_single
+    82    337  array_dimensions
+    83    338  array_content
+    84    339  function_declaration
+    85    340  function_definition
+    86    341  function_parameters
+    87    342  function_call_argus
+    88    343  expr
+    89    344  expr_assign
+    90    345  expr_logicOR
+    91    346  expr_logicAND
+    92    347  expr_bitwiseOR
+    93    348  expr_bitwiseXOR
+    94    349  expr_bitwiseAND
+    95    350  expr_isequal
+    96    351  expr_compare
+    97    352  expr_shift
+    98    353  expr_add_sub
+    99    354  expr_mul_div_mod
+   100    355  expr_second
+   101    356  expr_first
+   102    357  statement_compound
+   103    358  statement_multiple
+   104    359  statement_expr
+   105    360  statement_if
+   106    361  statement_switch
+   107    362  statement_clause_multiple
+   108    363  statement_clause
+   109    364  statement_case
+   110    365  statement_default
+   111    366  statement_while
+   112    367  statement_for
+   113    368  statement_return
+   114    369  statement_break
+   115    370  statement_continue

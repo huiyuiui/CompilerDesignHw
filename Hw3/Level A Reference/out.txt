@@ -1,0 +1,65 @@
+----- codegen -----
+---------
+in
+pop 0 local var, 0 local param
+
+----- dp_fib -----
+fi offset:48 arr: 0 ptr:0
+dp offset:52 arr: 0 ptr:1
+---------
+in
+dp: 52
+fi: 48
+pop 0 local var, 2 local param
+
+----- codegen -----
+---------
+in
+i: -24 0
+i: -24 0
+in
+i: -24 0
+pop 0 local var, 0 local param
+dp: -4 1
+dp: -4 1
+a: -28 0
+b: -32 0
+b: -32
+a: -28
+i: -24
+: 0
+: 0
+: 0
+: 0
+dp: -4
+pop 8 local var, 0 local param
+----- dp_fib -----
+fi offset:48 arr: 0 ptr:0
+dp offset:52 arr: 0 ptr:1
+---------
+in
+fi: 48 0
+in
+pop 0 local var, 0 local param
+fi: 48 0
+in
+pop 0 local var, 0 local param
+fi: 48 0
+shifted_fi: -4 0
+in
+dp: 52 0
+fi: 48 0
+dp: 52 0
+fi: 48 0
+shifted_fi: -4 0
+ret: -8 0
+ret: -8 0
+ret: -8
+pop 1 local var, 0 local param
+in
+shifted_fi: -4 0
+pop 0 local var, 0 local param
+shifted_fi: -4
+dp: 52
+fi: 48
+pop 1 local var, 2 local param

@@ -1,0 +1,12 @@
+#pragma      source    on
+char a = 'i';
+#pragma  source  off
+int b = 9015;
+#pragma   source      on
+#pragma token   on
+float c = +.0021;
+#pragma     token   off
+int d = 2134;
+#pragma source on
+#pragma token on
+char* d = "this is escape sequence \a\b\e\f\n\r\t\v\'\"\?\0\\ ending";

@@ -1,0 +1,1462 @@
+   0  $accept : program $end
+
+   1  program : function_decls function_defs
+
+   2  function_decls : function_decls function_decl
+   3                 | function_decl
+
+   4  function_defs : function_defs function_def
+   5                | function_def
+
+   6  $$1 :
+
+   7  function_def : TYPE ID L_BRACKET parameters R_BRACKET $$1 compound_stmt
+
+   8  $$2 :
+
+   9  function_def : TYPE ID L_BRACKET R_BRACKET $$2 compound_stmt
+
+  10  parameters : parameter
+  11             | parameters COMMA parameter
+
+  12  parameter : TYPE ID
+  13            | TYPE MULTIPLY ID
+
+  14  function_decl : TYPE ID L_BRACKET parameters R_BRACKET SEMICOLON
+  15                | TYPE ID L_BRACKET R_BRACKET SEMICOLON
+
+  16  compound_stmt : L_PARENTHESIS stmts R_PARENTHESIS
+  17                | L_PARENTHESIS R_PARENTHESIS
+
+  18  stmts : stmts stmt
+  19        | stmt
+
+  20  stmt : scalar
+  21       | assign_expr SEMICOLON
+  22       | digitalwrite_stmt
+  23       | delay_stmt
+
+  24  digitalwrite_stmt : DIGITALWRITE L_BRACKET NUM COMMA DVALUE R_BRACKET SEMICOLON
+
+  25  delay_stmt : DELAY L_BRACKET assign_expr R_BRACKET SEMICOLON
+
+  26  scalar : TYPE ids SEMICOLON
+
+  27  ids : id_decl
+  28      | ids COMMA id_decl
+
+  29  id_decl : id_decl_front ASSIGN equal_not_equal_expr
+  30          | id_decl_front
+
+  31  id_decl_front : ID
+  32                | MULTIPLY ID
+
+  33  assign_expr : ID ASSIGN assign_expr
+  34              | MULTIPLY ID ASSIGN assign_expr
+  35              | equal_not_equal_expr
+
+  36  equal_not_equal_expr : equal_not_equal_expr EQUAL other_branch_expr
+  37                       | equal_not_equal_expr NOT_EQUAL other_branch_expr
+  38                       | other_branch_expr
+
+  39  other_branch_expr : other_branch_expr GREATER_THAN add_minus_expr
+  40                    | other_branch_expr LESS_THAN add_minus_expr
+  41                    | other_branch_expr GREATER_OR_EQUAL_THAN add_minus_expr
+  42                    | other_branch_expr LESS_OR_EQUAL_THAN add_minus_expr
+  43                    | add_minus_expr
+
+  44  add_minus_expr : add_minus_expr ADD term_expr
+  45                 | add_minus_expr MINUS term_expr
+  46                 | term_expr
+
+  47  term_expr : term_expr MULTIPLY prefix_expr
+  48            | term_expr DIVIDE prefix_expr
+  49            | prefix_expr
+
+  50  prefix_expr : MINUS prefix_expr
+  51              | MULTIPLY ID
+  52              | AND_OP ID
+  53              | postfix_expr
+
+  54  postfix_expr : ID L_BRACKET R_BRACKET
+  55               | ID L_BRACKET arguments R_BRACKET
+  56               | expr_end
+
+  57  expr_end : ID
+  58           | NUM
+  59           | L_BRACKET equal_not_equal_expr R_BRACKET
+
+  60  arguments : arguments COMMA equal_not_equal_expr
+  61            | equal_not_equal_expr
+
+state 0
+	$accept : . program $end  (0)
+
+	TYPE  shift 1
+	.  error
+
+	program  goto 2
+	function_decl  goto 3
+	function_decls  goto 4
+
+
+state 1
+	function_decl : TYPE . ID L_BRACKET parameters R_BRACKET SEMICOLON  (14)
+	function_decl : TYPE . ID L_BRACKET R_BRACKET SEMICOLON  (15)
+
+	ID  shift 5
+	.  error
+
+
+state 2
+	$accept : program . $end  (0)
+
+	$end  accept
+
+
+state 3
+	function_decls : function_decl .  (3)
+
+	.  reduce 3
+
+
+state 4
+	program : function_decls . function_defs  (1)
+	function_decls : function_decls . function_decl  (2)
+
+	TYPE  shift 6
+	.  error
+
+	function_def  goto 7
+	function_decl  goto 8
+	function_defs  goto 9
+
+
+state 5
+	function_decl : TYPE ID . L_BRACKET parameters R_BRACKET SEMICOLON  (14)
+	function_decl : TYPE ID . L_BRACKET R_BRACKET SEMICOLON  (15)
+
+	L_BRACKET  shift 10
+	.  error
+
+
+state 6
+	function_def : TYPE . ID L_BRACKET parameters R_BRACKET $$1 compound_stmt  (7)
+	function_def : TYPE . ID L_BRACKET R_BRACKET $$2 compound_stmt  (9)
+	function_decl : TYPE . ID L_BRACKET parameters R_BRACKET SEMICOLON  (14)
+	function_decl : TYPE . ID L_BRACKET R_BRACKET SEMICOLON  (15)
+
+	ID  shift 11
+	.  error
+
+
+state 7
+	function_defs : function_def .  (5)
+
+	.  reduce 5
+
+
+state 8
+	function_decls : function_decls function_decl .  (2)
+
+	.  reduce 2
+
+
+state 9
+	program : function_decls function_defs .  (1)
+	function_defs : function_defs . function_def  (4)
+
+	TYPE  shift 12
+	$end  reduce 1
+
+	function_def  goto 13
+
+
+state 10
+	function_decl : TYPE ID L_BRACKET . parameters R_BRACKET SEMICOLON  (14)
+	function_decl : TYPE ID L_BRACKET . R_BRACKET SEMICOLON  (15)
+
+	TYPE  shift 14
+	R_BRACKET  shift 15
+	.  error
+
+	parameters  goto 16
+	parameter  goto 17
+
+
+state 11
+	function_def : TYPE ID . L_BRACKET parameters R_BRACKET $$1 compound_stmt  (7)
+	function_def : TYPE ID . L_BRACKET R_BRACKET $$2 compound_stmt  (9)
+	function_decl : TYPE ID . L_BRACKET parameters R_BRACKET SEMICOLON  (14)
+	function_decl : TYPE ID . L_BRACKET R_BRACKET SEMICOLON  (15)
+
+	L_BRACKET  shift 18
+	.  error
+
+
+state 12
+	function_def : TYPE . ID L_BRACKET parameters R_BRACKET $$1 compound_stmt  (7)
+	function_def : TYPE . ID L_BRACKET R_BRACKET $$2 compound_stmt  (9)
+
+	ID  shift 19
+	.  error
+
+
+state 13
+	function_defs : function_defs function_def .  (4)
+
+	.  reduce 4
+
+
+state 14
+	parameter : TYPE . ID  (12)
+	parameter : TYPE . MULTIPLY ID  (13)
+
+	ID  shift 20
+	MULTIPLY  shift 21
+	.  error
+
+
+state 15
+	function_decl : TYPE ID L_BRACKET R_BRACKET . SEMICOLON  (15)
+
+	SEMICOLON  shift 22
+	.  error
+
+
+state 16
+	parameters : parameters . COMMA parameter  (11)
+	function_decl : TYPE ID L_BRACKET parameters . R_BRACKET SEMICOLON  (14)
+
+	COMMA  shift 23
+	R_BRACKET  shift 24
+	.  error
+
+
+state 17
+	parameters : parameter .  (10)
+
+	.  reduce 10
+
+
+state 18
+	function_def : TYPE ID L_BRACKET . parameters R_BRACKET $$1 compound_stmt  (7)
+	function_def : TYPE ID L_BRACKET . R_BRACKET $$2 compound_stmt  (9)
+	function_decl : TYPE ID L_BRACKET . parameters R_BRACKET SEMICOLON  (14)
+	function_decl : TYPE ID L_BRACKET . R_BRACKET SEMICOLON  (15)
+
+	TYPE  shift 14
+	R_BRACKET  shift 25
+	.  error
+
+	parameters  goto 26
+	parameter  goto 17
+
+
+state 19
+	function_def : TYPE ID . L_BRACKET parameters R_BRACKET $$1 compound_stmt  (7)
+	function_def : TYPE ID . L_BRACKET R_BRACKET $$2 compound_stmt  (9)
+
+	L_BRACKET  shift 27
+	.  error
+
+
+state 20
+	parameter : TYPE ID .  (12)
+
+	.  reduce 12
+
+
+state 21
+	parameter : TYPE MULTIPLY . ID  (13)
+
+	ID  shift 28
+	.  error
+
+
+state 22
+	function_decl : TYPE ID L_BRACKET R_BRACKET SEMICOLON .  (15)
+
+	.  reduce 15
+
+
+state 23
+	parameters : parameters COMMA . parameter  (11)
+
+	TYPE  shift 14
+	.  error
+
+	parameter  goto 29
+
+
+state 24
+	function_decl : TYPE ID L_BRACKET parameters R_BRACKET . SEMICOLON  (14)
+
+	SEMICOLON  shift 30
+	.  error
+
+
+state 25
+	function_def : TYPE ID L_BRACKET R_BRACKET . $$2 compound_stmt  (9)
+	function_decl : TYPE ID L_BRACKET R_BRACKET . SEMICOLON  (15)
+	$$2 : .  (8)
+
+	SEMICOLON  shift 22
+	L_PARENTHESIS  reduce 8
+
+	$$2  goto 31
+
+
+state 26
+	function_def : TYPE ID L_BRACKET parameters . R_BRACKET $$1 compound_stmt  (7)
+	parameters : parameters . COMMA parameter  (11)
+	function_decl : TYPE ID L_BRACKET parameters . R_BRACKET SEMICOLON  (14)
+
+	COMMA  shift 23
+	R_BRACKET  shift 32
+	.  error
+
+
+state 27
+	function_def : TYPE ID L_BRACKET . parameters R_BRACKET $$1 compound_stmt  (7)
+	function_def : TYPE ID L_BRACKET . R_BRACKET $$2 compound_stmt  (9)
+
+	TYPE  shift 14
+	R_BRACKET  shift 33
+	.  error
+
+	parameters  goto 34
+	parameter  goto 17
+
+
+state 28
+	parameter : TYPE MULTIPLY ID .  (13)
+
+	.  reduce 13
+
+
+state 29
+	parameters : parameters COMMA parameter .  (11)
+
+	.  reduce 11
+
+
+state 30
+	function_decl : TYPE ID L_BRACKET parameters R_BRACKET SEMICOLON .  (14)
+
+	.  reduce 14
+
+
+state 31
+	function_def : TYPE ID L_BRACKET R_BRACKET $$2 . compound_stmt  (9)
+
+	L_PARENTHESIS  shift 35
+	.  error
+
+	compound_stmt  goto 36
+
+
+state 32
+	function_def : TYPE ID L_BRACKET parameters R_BRACKET . $$1 compound_stmt  (7)
+	function_decl : TYPE ID L_BRACKET parameters R_BRACKET . SEMICOLON  (14)
+	$$1 : .  (6)
+
+	SEMICOLON  shift 30
+	L_PARENTHESIS  reduce 6
+
+	$$1  goto 37
+
+
+state 33
+	function_def : TYPE ID L_BRACKET R_BRACKET . $$2 compound_stmt  (9)
+	$$2 : .  (8)
+
+	.  reduce 8
+
+	$$2  goto 31
+
+
+state 34
+	function_def : TYPE ID L_BRACKET parameters . R_BRACKET $$1 compound_stmt  (7)
+	parameters : parameters . COMMA parameter  (11)
+
+	COMMA  shift 23
+	R_BRACKET  shift 38
+	.  error
+
+
+state 35
+	compound_stmt : L_PARENTHESIS . stmts R_PARENTHESIS  (16)
+	compound_stmt : L_PARENTHESIS . R_PARENTHESIS  (17)
+
+	NUM  shift 39
+	TYPE  shift 40
+	ID  shift 41
+	MINUS  shift 42
+	MULTIPLY  shift 43
+	AND_OP  shift 44
+	L_BRACKET  shift 45
+	R_PARENTHESIS  shift 46
+	DIGITALWRITE  shift 47
+	DELAY  shift 48
+	.  error
+
+	stmts  goto 49
+	stmt  goto 50
+	scalar  goto 51
+	assign_expr  goto 52
+	equal_not_equal_expr  goto 53
+	other_branch_expr  goto 54
+	add_minus_expr  goto 55
+	term_expr  goto 56
+	prefix_expr  goto 57
+	postfix_expr  goto 58
+	expr_end  goto 59
+	digitalwrite_stmt  goto 60
+	delay_stmt  goto 61
+
+
+state 36
+	function_def : TYPE ID L_BRACKET R_BRACKET $$2 compound_stmt .  (9)
+
+	.  reduce 9
+
+
+state 37
+	function_def : TYPE ID L_BRACKET parameters R_BRACKET $$1 . compound_stmt  (7)
+
+	L_PARENTHESIS  shift 35
+	.  error
+
+	compound_stmt  goto 62
+
+
+state 38
+	function_def : TYPE ID L_BRACKET parameters R_BRACKET . $$1 compound_stmt  (7)
+	$$1 : .  (6)
+
+	.  reduce 6
+
+	$$1  goto 37
+
+
+state 39
+	expr_end : NUM .  (58)
+
+	.  reduce 58
+
+
+state 40
+	scalar : TYPE . ids SEMICOLON  (26)
+
+	ID  shift 63
+	MULTIPLY  shift 64
+	.  error
+
+	ids  goto 65
+	id_decl  goto 66
+	id_decl_front  goto 67
+
+
+state 41
+	assign_expr : ID . ASSIGN assign_expr  (33)
+	postfix_expr : ID . L_BRACKET R_BRACKET  (54)
+	postfix_expr : ID . L_BRACKET arguments R_BRACKET  (55)
+	expr_end : ID .  (57)
+
+	ASSIGN  shift 68
+	L_BRACKET  shift 69
+	LESS_OR_EQUAL_THAN  reduce 57
+	GREATER_OR_EQUAL_THAN  reduce 57
+	EQUAL  reduce 57
+	NOT_EQUAL  reduce 57
+	ADD  reduce 57
+	MINUS  reduce 57
+	MULTIPLY  reduce 57
+	DIVIDE  reduce 57
+	LESS_THAN  reduce 57
+	GREATER_THAN  reduce 57
+	SEMICOLON  reduce 57
+	R_BRACKET  reduce 57
+
+
+state 42
+	prefix_expr : MINUS . prefix_expr  (50)
+
+	NUM  shift 39
+	ID  shift 70
+	MINUS  shift 42
+	MULTIPLY  shift 71
+	AND_OP  shift 44
+	L_BRACKET  shift 45
+	.  error
+
+	prefix_expr  goto 72
+	postfix_expr  goto 58
+	expr_end  goto 59
+
+
+state 43
+	assign_expr : MULTIPLY . ID ASSIGN assign_expr  (34)
+	prefix_expr : MULTIPLY . ID  (51)
+
+	ID  shift 73
+	.  error
+
+
+state 44
+	prefix_expr : AND_OP . ID  (52)
+
+	ID  shift 74
+	.  error
+
+
+state 45
+	expr_end : L_BRACKET . equal_not_equal_expr R_BRACKET  (59)
+
+	NUM  shift 39
+	ID  shift 70
+	MINUS  shift 42
+	MULTIPLY  shift 71
+	AND_OP  shift 44
+	L_BRACKET  shift 45
+	.  error
+
+	equal_not_equal_expr  goto 75
+	other_branch_expr  goto 54
+	add_minus_expr  goto 55
+	term_expr  goto 56
+	prefix_expr  goto 57
+	postfix_expr  goto 58
+	expr_end  goto 59
+
+
+state 46
+	compound_stmt : L_PARENTHESIS R_PARENTHESIS .  (17)
+
+	.  reduce 17
+
+
+state 47
+	digitalwrite_stmt : DIGITALWRITE . L_BRACKET NUM COMMA DVALUE R_BRACKET SEMICOLON  (24)
+
+	L_BRACKET  shift 76
+	.  error
+
+
+state 48
+	delay_stmt : DELAY . L_BRACKET assign_expr R_BRACKET SEMICOLON  (25)
+
+	L_BRACKET  shift 77
+	.  error
+
+
+state 49
+	compound_stmt : L_PARENTHESIS stmts . R_PARENTHESIS  (16)
+	stmts : stmts . stmt  (18)
+
+	NUM  shift 39
+	TYPE  shift 40
+	ID  shift 41
+	MINUS  shift 42
+	MULTIPLY  shift 43
+	AND_OP  shift 44
+	L_BRACKET  shift 45
+	R_PARENTHESIS  shift 78
+	DIGITALWRITE  shift 47
+	DELAY  shift 48
+	.  error
+
+	stmt  goto 79
+	scalar  goto 51
+	assign_expr  goto 52
+	equal_not_equal_expr  goto 53
+	other_branch_expr  goto 54
+	add_minus_expr  goto 55
+	term_expr  goto 56
+	prefix_expr  goto 57
+	postfix_expr  goto 58
+	expr_end  goto 59
+	digitalwrite_stmt  goto 60
+	delay_stmt  goto 61
+
+
+state 50
+	stmts : stmt .  (19)
+
+	.  reduce 19
+
+
+state 51
+	stmt : scalar .  (20)
+
+	.  reduce 20
+
+
+state 52
+	stmt : assign_expr . SEMICOLON  (21)
+
+	SEMICOLON  shift 80
+	.  error
+
+
+state 53
+	assign_expr : equal_not_equal_expr .  (35)
+	equal_not_equal_expr : equal_not_equal_expr . EQUAL other_branch_expr  (36)
+	equal_not_equal_expr : equal_not_equal_expr . NOT_EQUAL other_branch_expr  (37)
+
+	EQUAL  shift 81
+	NOT_EQUAL  shift 82
+	SEMICOLON  reduce 35
+	R_BRACKET  reduce 35
+
+
+state 54
+	equal_not_equal_expr : other_branch_expr .  (38)
+	other_branch_expr : other_branch_expr . GREATER_THAN add_minus_expr  (39)
+	other_branch_expr : other_branch_expr . LESS_THAN add_minus_expr  (40)
+	other_branch_expr : other_branch_expr . GREATER_OR_EQUAL_THAN add_minus_expr  (41)
+	other_branch_expr : other_branch_expr . LESS_OR_EQUAL_THAN add_minus_expr  (42)
+
+	LESS_OR_EQUAL_THAN  shift 83
+	GREATER_OR_EQUAL_THAN  shift 84
+	LESS_THAN  shift 85
+	GREATER_THAN  shift 86
+	EQUAL  reduce 38
+	NOT_EQUAL  reduce 38
+	SEMICOLON  reduce 38
+	COMMA  reduce 38
+	R_BRACKET  reduce 38
+
+
+state 55
+	other_branch_expr : add_minus_expr .  (43)
+	add_minus_expr : add_minus_expr . ADD term_expr  (44)
+	add_minus_expr : add_minus_expr . MINUS term_expr  (45)
+
+	ADD  shift 87
+	MINUS  shift 88
+	LESS_OR_EQUAL_THAN  reduce 43
+	GREATER_OR_EQUAL_THAN  reduce 43
+	EQUAL  reduce 43
+	NOT_EQUAL  reduce 43
+	LESS_THAN  reduce 43
+	GREATER_THAN  reduce 43
+	SEMICOLON  reduce 43
+	COMMA  reduce 43
+	R_BRACKET  reduce 43
+
+
+state 56
+	add_minus_expr : term_expr .  (46)
+	term_expr : term_expr . MULTIPLY prefix_expr  (47)
+	term_expr : term_expr . DIVIDE prefix_expr  (48)
+
+	MULTIPLY  shift 89
+	DIVIDE  shift 90
+	LESS_OR_EQUAL_THAN  reduce 46
+	GREATER_OR_EQUAL_THAN  reduce 46
+	EQUAL  reduce 46
+	NOT_EQUAL  reduce 46
+	ADD  reduce 46
+	MINUS  reduce 46
+	LESS_THAN  reduce 46
+	GREATER_THAN  reduce 46
+	SEMICOLON  reduce 46
+	COMMA  reduce 46
+	R_BRACKET  reduce 46
+
+
+state 57
+	term_expr : prefix_expr .  (49)
+
+	.  reduce 49
+
+
+state 58
+	prefix_expr : postfix_expr .  (53)
+
+	.  reduce 53
+
+
+state 59
+	postfix_expr : expr_end .  (56)
+
+	.  reduce 56
+
+
+state 60
+	stmt : digitalwrite_stmt .  (22)
+
+	.  reduce 22
+
+
+state 61
+	stmt : delay_stmt .  (23)
+
+	.  reduce 23
+
+
+state 62
+	function_def : TYPE ID L_BRACKET parameters R_BRACKET $$1 compound_stmt .  (7)
+
+	.  reduce 7
+
+
+state 63
+	id_decl_front : ID .  (31)
+
+	.  reduce 31
+
+
+state 64
+	id_decl_front : MULTIPLY . ID  (32)
+
+	ID  shift 91
+	.  error
+
+
+state 65
+	scalar : TYPE ids . SEMICOLON  (26)
+	ids : ids . COMMA id_decl  (28)
+
+	SEMICOLON  shift 92
+	COMMA  shift 93
+	.  error
+
+
+state 66
+	ids : id_decl .  (27)
+
+	.  reduce 27
+
+
+state 67
+	id_decl : id_decl_front . ASSIGN equal_not_equal_expr  (29)
+	id_decl : id_decl_front .  (30)
+
+	ASSIGN  shift 94
+	SEMICOLON  reduce 30
+	COMMA  reduce 30
+
+
+state 68
+	assign_expr : ID ASSIGN . assign_expr  (33)
+
+	NUM  shift 39
+	ID  shift 41
+	MINUS  shift 42
+	MULTIPLY  shift 43
+	AND_OP  shift 44
+	L_BRACKET  shift 45
+	.  error
+
+	assign_expr  goto 95
+	equal_not_equal_expr  goto 53
+	other_branch_expr  goto 54
+	add_minus_expr  goto 55
+	term_expr  goto 56
+	prefix_expr  goto 57
+	postfix_expr  goto 58
+	expr_end  goto 59
+
+
+state 69
+	postfix_expr : ID L_BRACKET . R_BRACKET  (54)
+	postfix_expr : ID L_BRACKET . arguments R_BRACKET  (55)
+
+	NUM  shift 39
+	ID  shift 70
+	MINUS  shift 42
+	MULTIPLY  shift 71
+	AND_OP  shift 44
+	L_BRACKET  shift 45
+	R_BRACKET  shift 96
+	.  error
+
+	equal_not_equal_expr  goto 97
+	other_branch_expr  goto 54
+	add_minus_expr  goto 55
+	term_expr  goto 56
+	prefix_expr  goto 57
+	postfix_expr  goto 58
+	expr_end  goto 59
+	arguments  goto 98
+
+
+state 70
+	postfix_expr : ID . L_BRACKET R_BRACKET  (54)
+	postfix_expr : ID . L_BRACKET arguments R_BRACKET  (55)
+	expr_end : ID .  (57)
+
+	L_BRACKET  shift 69
+	LESS_OR_EQUAL_THAN  reduce 57
+	GREATER_OR_EQUAL_THAN  reduce 57
+	EQUAL  reduce 57
+	NOT_EQUAL  reduce 57
+	ADD  reduce 57
+	MINUS  reduce 57
+	MULTIPLY  reduce 57
+	DIVIDE  reduce 57
+	LESS_THAN  reduce 57
+	GREATER_THAN  reduce 57
+	SEMICOLON  reduce 57
+	COMMA  reduce 57
+	R_BRACKET  reduce 57
+
+
+state 71
+	prefix_expr : MULTIPLY . ID  (51)
+
+	ID  shift 99
+	.  error
+
+
+state 72
+	prefix_expr : MINUS prefix_expr .  (50)
+
+	.  reduce 50
+
+
+state 73
+	assign_expr : MULTIPLY ID . ASSIGN assign_expr  (34)
+	prefix_expr : MULTIPLY ID .  (51)
+
+	ASSIGN  shift 100
+	LESS_OR_EQUAL_THAN  reduce 51
+	GREATER_OR_EQUAL_THAN  reduce 51
+	EQUAL  reduce 51
+	NOT_EQUAL  reduce 51
+	ADD  reduce 51
+	MINUS  reduce 51
+	MULTIPLY  reduce 51
+	DIVIDE  reduce 51
+	LESS_THAN  reduce 51
+	GREATER_THAN  reduce 51
+	SEMICOLON  reduce 51
+	R_BRACKET  reduce 51
+
+
+state 74
+	prefix_expr : AND_OP ID .  (52)
+
+	.  reduce 52
+
+
+state 75
+	equal_not_equal_expr : equal_not_equal_expr . EQUAL other_branch_expr  (36)
+	equal_not_equal_expr : equal_not_equal_expr . NOT_EQUAL other_branch_expr  (37)
+	expr_end : L_BRACKET equal_not_equal_expr . R_BRACKET  (59)
+
+	EQUAL  shift 81
+	NOT_EQUAL  shift 82
+	R_BRACKET  shift 101
+	.  error
+
+
+state 76
+	digitalwrite_stmt : DIGITALWRITE L_BRACKET . NUM COMMA DVALUE R_BRACKET SEMICOLON  (24)
+
+	NUM  shift 102
+	.  error
+
+
+state 77
+	delay_stmt : DELAY L_BRACKET . assign_expr R_BRACKET SEMICOLON  (25)
+
+	NUM  shift 39
+	ID  shift 41
+	MINUS  shift 42
+	MULTIPLY  shift 43
+	AND_OP  shift 44
+	L_BRACKET  shift 45
+	.  error
+
+	assign_expr  goto 103
+	equal_not_equal_expr  goto 53
+	other_branch_expr  goto 54
+	add_minus_expr  goto 55
+	term_expr  goto 56
+	prefix_expr  goto 57
+	postfix_expr  goto 58
+	expr_end  goto 59
+
+
+state 78
+	compound_stmt : L_PARENTHESIS stmts R_PARENTHESIS .  (16)
+
+	.  reduce 16
+
+
+state 79
+	stmts : stmts stmt .  (18)
+
+	.  reduce 18
+
+
+state 80
+	stmt : assign_expr SEMICOLON .  (21)
+
+	.  reduce 21
+
+
+state 81
+	equal_not_equal_expr : equal_not_equal_expr EQUAL . other_branch_expr  (36)
+
+	NUM  shift 39
+	ID  shift 70
+	MINUS  shift 42
+	MULTIPLY  shift 71
+	AND_OP  shift 44
+	L_BRACKET  shift 45
+	.  error
+
+	other_branch_expr  goto 104
+	add_minus_expr  goto 55
+	term_expr  goto 56
+	prefix_expr  goto 57
+	postfix_expr  goto 58
+	expr_end  goto 59
+
+
+state 82
+	equal_not_equal_expr : equal_not_equal_expr NOT_EQUAL . other_branch_expr  (37)
+
+	NUM  shift 39
+	ID  shift 70
+	MINUS  shift 42
+	MULTIPLY  shift 71
+	AND_OP  shift 44
+	L_BRACKET  shift 45
+	.  error
+
+	other_branch_expr  goto 105
+	add_minus_expr  goto 55
+	term_expr  goto 56
+	prefix_expr  goto 57
+	postfix_expr  goto 58
+	expr_end  goto 59
+
+
+state 83
+	other_branch_expr : other_branch_expr LESS_OR_EQUAL_THAN . add_minus_expr  (42)
+
+	NUM  shift 39
+	ID  shift 70
+	MINUS  shift 42
+	MULTIPLY  shift 71
+	AND_OP  shift 44
+	L_BRACKET  shift 45
+	.  error
+
+	add_minus_expr  goto 106
+	term_expr  goto 56
+	prefix_expr  goto 57
+	postfix_expr  goto 58
+	expr_end  goto 59
+
+
+state 84
+	other_branch_expr : other_branch_expr GREATER_OR_EQUAL_THAN . add_minus_expr  (41)
+
+	NUM  shift 39
+	ID  shift 70
+	MINUS  shift 42
+	MULTIPLY  shift 71
+	AND_OP  shift 44
+	L_BRACKET  shift 45
+	.  error
+
+	add_minus_expr  goto 107
+	term_expr  goto 56
+	prefix_expr  goto 57
+	postfix_expr  goto 58
+	expr_end  goto 59
+
+
+state 85
+	other_branch_expr : other_branch_expr LESS_THAN . add_minus_expr  (40)
+
+	NUM  shift 39
+	ID  shift 70
+	MINUS  shift 42
+	MULTIPLY  shift 71
+	AND_OP  shift 44
+	L_BRACKET  shift 45
+	.  error
+
+	add_minus_expr  goto 108
+	term_expr  goto 56
+	prefix_expr  goto 57
+	postfix_expr  goto 58
+	expr_end  goto 59
+
+
+state 86
+	other_branch_expr : other_branch_expr GREATER_THAN . add_minus_expr  (39)
+
+	NUM  shift 39
+	ID  shift 70
+	MINUS  shift 42
+	MULTIPLY  shift 71
+	AND_OP  shift 44
+	L_BRACKET  shift 45
+	.  error
+
+	add_minus_expr  goto 109
+	term_expr  goto 56
+	prefix_expr  goto 57
+	postfix_expr  goto 58
+	expr_end  goto 59
+
+
+state 87
+	add_minus_expr : add_minus_expr ADD . term_expr  (44)
+
+	NUM  shift 39
+	ID  shift 70
+	MINUS  shift 42
+	MULTIPLY  shift 71
+	AND_OP  shift 44
+	L_BRACKET  shift 45
+	.  error
+
+	term_expr  goto 110
+	prefix_expr  goto 57
+	postfix_expr  goto 58
+	expr_end  goto 59
+
+
+state 88
+	add_minus_expr : add_minus_expr MINUS . term_expr  (45)
+
+	NUM  shift 39
+	ID  shift 70
+	MINUS  shift 42
+	MULTIPLY  shift 71
+	AND_OP  shift 44
+	L_BRACKET  shift 45
+	.  error
+
+	term_expr  goto 111
+	prefix_expr  goto 57
+	postfix_expr  goto 58
+	expr_end  goto 59
+
+
+state 89
+	term_expr : term_expr MULTIPLY . prefix_expr  (47)
+
+	NUM  shift 39
+	ID  shift 70
+	MINUS  shift 42
+	MULTIPLY  shift 71
+	AND_OP  shift 44
+	L_BRACKET  shift 45
+	.  error
+
+	prefix_expr  goto 112
+	postfix_expr  goto 58
+	expr_end  goto 59
+
+
+state 90
+	term_expr : term_expr DIVIDE . prefix_expr  (48)
+
+	NUM  shift 39
+	ID  shift 70
+	MINUS  shift 42
+	MULTIPLY  shift 71
+	AND_OP  shift 44
+	L_BRACKET  shift 45
+	.  error
+
+	prefix_expr  goto 113
+	postfix_expr  goto 58
+	expr_end  goto 59
+
+
+state 91
+	id_decl_front : MULTIPLY ID .  (32)
+
+	.  reduce 32
+
+
+state 92
+	scalar : TYPE ids SEMICOLON .  (26)
+
+	.  reduce 26
+
+
+state 93
+	ids : ids COMMA . id_decl  (28)
+
+	ID  shift 63
+	MULTIPLY  shift 64
+	.  error
+
+	id_decl  goto 114
+	id_decl_front  goto 67
+
+
+state 94
+	id_decl : id_decl_front ASSIGN . equal_not_equal_expr  (29)
+
+	NUM  shift 39
+	ID  shift 70
+	MINUS  shift 42
+	MULTIPLY  shift 71
+	AND_OP  shift 44
+	L_BRACKET  shift 45
+	.  error
+
+	equal_not_equal_expr  goto 115
+	other_branch_expr  goto 54
+	add_minus_expr  goto 55
+	term_expr  goto 56
+	prefix_expr  goto 57
+	postfix_expr  goto 58
+	expr_end  goto 59
+
+
+state 95
+	assign_expr : ID ASSIGN assign_expr .  (33)
+
+	.  reduce 33
+
+
+state 96
+	postfix_expr : ID L_BRACKET R_BRACKET .  (54)
+
+	.  reduce 54
+
+
+state 97
+	equal_not_equal_expr : equal_not_equal_expr . EQUAL other_branch_expr  (36)
+	equal_not_equal_expr : equal_not_equal_expr . NOT_EQUAL other_branch_expr  (37)
+	arguments : equal_not_equal_expr .  (61)
+
+	EQUAL  shift 81
+	NOT_EQUAL  shift 82
+	COMMA  reduce 61
+	R_BRACKET  reduce 61
+
+
+state 98
+	postfix_expr : ID L_BRACKET arguments . R_BRACKET  (55)
+	arguments : arguments . COMMA equal_not_equal_expr  (60)
+
+	COMMA  shift 116
+	R_BRACKET  shift 117
+	.  error
+
+
+state 99
+	prefix_expr : MULTIPLY ID .  (51)
+
+	.  reduce 51
+
+
+state 100
+	assign_expr : MULTIPLY ID ASSIGN . assign_expr  (34)
+
+	NUM  shift 39
+	ID  shift 41
+	MINUS  shift 42
+	MULTIPLY  shift 43
+	AND_OP  shift 44
+	L_BRACKET  shift 45
+	.  error
+
+	assign_expr  goto 118
+	equal_not_equal_expr  goto 53
+	other_branch_expr  goto 54
+	add_minus_expr  goto 55
+	term_expr  goto 56
+	prefix_expr  goto 57
+	postfix_expr  goto 58
+	expr_end  goto 59
+
+
+state 101
+	expr_end : L_BRACKET equal_not_equal_expr R_BRACKET .  (59)
+
+	.  reduce 59
+
+
+state 102
+	digitalwrite_stmt : DIGITALWRITE L_BRACKET NUM . COMMA DVALUE R_BRACKET SEMICOLON  (24)
+
+	COMMA  shift 119
+	.  error
+
+
+state 103
+	delay_stmt : DELAY L_BRACKET assign_expr . R_BRACKET SEMICOLON  (25)
+
+	R_BRACKET  shift 120
+	.  error
+
+
+state 104
+	equal_not_equal_expr : equal_not_equal_expr EQUAL other_branch_expr .  (36)
+	other_branch_expr : other_branch_expr . GREATER_THAN add_minus_expr  (39)
+	other_branch_expr : other_branch_expr . LESS_THAN add_minus_expr  (40)
+	other_branch_expr : other_branch_expr . GREATER_OR_EQUAL_THAN add_minus_expr  (41)
+	other_branch_expr : other_branch_expr . LESS_OR_EQUAL_THAN add_minus_expr  (42)
+
+	LESS_OR_EQUAL_THAN  shift 83
+	GREATER_OR_EQUAL_THAN  shift 84
+	LESS_THAN  shift 85
+	GREATER_THAN  shift 86
+	EQUAL  reduce 36
+	NOT_EQUAL  reduce 36
+	SEMICOLON  reduce 36
+	COMMA  reduce 36
+	R_BRACKET  reduce 36
+
+
+state 105
+	equal_not_equal_expr : equal_not_equal_expr NOT_EQUAL other_branch_expr .  (37)
+	other_branch_expr : other_branch_expr . GREATER_THAN add_minus_expr  (39)
+	other_branch_expr : other_branch_expr . LESS_THAN add_minus_expr  (40)
+	other_branch_expr : other_branch_expr . GREATER_OR_EQUAL_THAN add_minus_expr  (41)
+	other_branch_expr : other_branch_expr . LESS_OR_EQUAL_THAN add_minus_expr  (42)
+
+	LESS_OR_EQUAL_THAN  shift 83
+	GREATER_OR_EQUAL_THAN  shift 84
+	LESS_THAN  shift 85
+	GREATER_THAN  shift 86
+	EQUAL  reduce 37
+	NOT_EQUAL  reduce 37
+	SEMICOLON  reduce 37
+	COMMA  reduce 37
+	R_BRACKET  reduce 37
+
+
+state 106
+	other_branch_expr : other_branch_expr LESS_OR_EQUAL_THAN add_minus_expr .  (42)
+	add_minus_expr : add_minus_expr . ADD term_expr  (44)
+	add_minus_expr : add_minus_expr . MINUS term_expr  (45)
+
+	ADD  shift 87
+	MINUS  shift 88
+	LESS_OR_EQUAL_THAN  reduce 42
+	GREATER_OR_EQUAL_THAN  reduce 42
+	EQUAL  reduce 42
+	NOT_EQUAL  reduce 42
+	LESS_THAN  reduce 42
+	GREATER_THAN  reduce 42
+	SEMICOLON  reduce 42
+	COMMA  reduce 42
+	R_BRACKET  reduce 42
+
+
+state 107
+	other_branch_expr : other_branch_expr GREATER_OR_EQUAL_THAN add_minus_expr .  (41)
+	add_minus_expr : add_minus_expr . ADD term_expr  (44)
+	add_minus_expr : add_minus_expr . MINUS term_expr  (45)
+
+	ADD  shift 87
+	MINUS  shift 88
+	LESS_OR_EQUAL_THAN  reduce 41
+	GREATER_OR_EQUAL_THAN  reduce 41
+	EQUAL  reduce 41
+	NOT_EQUAL  reduce 41
+	LESS_THAN  reduce 41
+	GREATER_THAN  reduce 41
+	SEMICOLON  reduce 41
+	COMMA  reduce 41
+	R_BRACKET  reduce 41
+
+
+state 108
+	other_branch_expr : other_branch_expr LESS_THAN add_minus_expr .  (40)
+	add_minus_expr : add_minus_expr . ADD term_expr  (44)
+	add_minus_expr : add_minus_expr . MINUS term_expr  (45)
+
+	ADD  shift 87
+	MINUS  shift 88
+	LESS_OR_EQUAL_THAN  reduce 40
+	GREATER_OR_EQUAL_THAN  reduce 40
+	EQUAL  reduce 40
+	NOT_EQUAL  reduce 40
+	LESS_THAN  reduce 40
+	GREATER_THAN  reduce 40
+	SEMICOLON  reduce 40
+	COMMA  reduce 40
+	R_BRACKET  reduce 40
+
+
+state 109
+	other_branch_expr : other_branch_expr GREATER_THAN add_minus_expr .  (39)
+	add_minus_expr : add_minus_expr . ADD term_expr  (44)
+	add_minus_expr : add_minus_expr . MINUS term_expr  (45)
+
+	ADD  shift 87
+	MINUS  shift 88
+	LESS_OR_EQUAL_THAN  reduce 39
+	GREATER_OR_EQUAL_THAN  reduce 39
+	EQUAL  reduce 39
+	NOT_EQUAL  reduce 39
+	LESS_THAN  reduce 39
+	GREATER_THAN  reduce 39
+	SEMICOLON  reduce 39
+	COMMA  reduce 39
+	R_BRACKET  reduce 39
+
+
+state 110
+	add_minus_expr : add_minus_expr ADD term_expr .  (44)
+	term_expr : term_expr . MULTIPLY prefix_expr  (47)
+	term_expr : term_expr . DIVIDE prefix_expr  (48)
+
+	MULTIPLY  shift 89
+	DIVIDE  shift 90
+	LESS_OR_EQUAL_THAN  reduce 44
+	GREATER_OR_EQUAL_THAN  reduce 44
+	EQUAL  reduce 44
+	NOT_EQUAL  reduce 44
+	ADD  reduce 44
+	MINUS  reduce 44
+	LESS_THAN  reduce 44
+	GREATER_THAN  reduce 44
+	SEMICOLON  reduce 44
+	COMMA  reduce 44
+	R_BRACKET  reduce 44
+
+
+state 111
+	add_minus_expr : add_minus_expr MINUS term_expr .  (45)
+	term_expr : term_expr . MULTIPLY prefix_expr  (47)
+	term_expr : term_expr . DIVIDE prefix_expr  (48)
+
+	MULTIPLY  shift 89
+	DIVIDE  shift 90
+	LESS_OR_EQUAL_THAN  reduce 45
+	GREATER_OR_EQUAL_THAN  reduce 45
+	EQUAL  reduce 45
+	NOT_EQUAL  reduce 45
+	ADD  reduce 45
+	MINUS  reduce 45
+	LESS_THAN  reduce 45
+	GREATER_THAN  reduce 45
+	SEMICOLON  reduce 45
+	COMMA  reduce 45
+	R_BRACKET  reduce 45
+
+
+state 112
+	term_expr : term_expr MULTIPLY prefix_expr .  (47)
+
+	.  reduce 47
+
+
+state 113
+	term_expr : term_expr DIVIDE prefix_expr .  (48)
+
+	.  reduce 48
+
+
+state 114
+	ids : ids COMMA id_decl .  (28)
+
+	.  reduce 28
+
+
+state 115
+	id_decl : id_decl_front ASSIGN equal_not_equal_expr .  (29)
+	equal_not_equal_expr : equal_not_equal_expr . EQUAL other_branch_expr  (36)
+	equal_not_equal_expr : equal_not_equal_expr . NOT_EQUAL other_branch_expr  (37)
+
+	EQUAL  shift 81
+	NOT_EQUAL  shift 82
+	SEMICOLON  reduce 29
+	COMMA  reduce 29
+
+
+state 116
+	arguments : arguments COMMA . equal_not_equal_expr  (60)
+
+	NUM  shift 39
+	ID  shift 70
+	MINUS  shift 42
+	MULTIPLY  shift 71
+	AND_OP  shift 44
+	L_BRACKET  shift 45
+	.  error
+
+	equal_not_equal_expr  goto 121
+	other_branch_expr  goto 54
+	add_minus_expr  goto 55
+	term_expr  goto 56
+	prefix_expr  goto 57
+	postfix_expr  goto 58
+	expr_end  goto 59
+
+
+state 117
+	postfix_expr : ID L_BRACKET arguments R_BRACKET .  (55)
+
+	.  reduce 55
+
+
+state 118
+	assign_expr : MULTIPLY ID ASSIGN assign_expr .  (34)
+
+	.  reduce 34
+
+
+state 119
+	digitalwrite_stmt : DIGITALWRITE L_BRACKET NUM COMMA . DVALUE R_BRACKET SEMICOLON  (24)
+
+	DVALUE  shift 122
+	.  error
+
+
+state 120
+	delay_stmt : DELAY L_BRACKET assign_expr R_BRACKET . SEMICOLON  (25)
+
+	SEMICOLON  shift 123
+	.  error
+
+
+state 121
+	equal_not_equal_expr : equal_not_equal_expr . EQUAL other_branch_expr  (36)
+	equal_not_equal_expr : equal_not_equal_expr . NOT_EQUAL other_branch_expr  (37)
+	arguments : arguments COMMA equal_not_equal_expr .  (60)
+
+	EQUAL  shift 81
+	NOT_EQUAL  shift 82
+	COMMA  reduce 60
+	R_BRACKET  reduce 60
+
+
+state 122
+	digitalwrite_stmt : DIGITALWRITE L_BRACKET NUM COMMA DVALUE . R_BRACKET SEMICOLON  (24)
+
+	R_BRACKET  shift 124
+	.  error
+
+
+state 123
+	delay_stmt : DELAY L_BRACKET assign_expr R_BRACKET SEMICOLON .  (25)
+
+	.  reduce 25
+
+
+state 124
+	digitalwrite_stmt : DIGITALWRITE L_BRACKET NUM COMMA DVALUE R_BRACKET . SEMICOLON  (24)
+
+	SEMICOLON  shift 125
+	.  error
+
+
+state 125
+	digitalwrite_stmt : DIGITALWRITE L_BRACKET NUM COMMA DVALUE R_BRACKET SEMICOLON .  (24)
+
+	.  reduce 24
+
+
+39 terminals, 28 nonterminals
+62 grammar rules, 126 states
